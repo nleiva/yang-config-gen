@@ -135,8 +135,8 @@ const ygotLo00 = `{
   }
 }`
 
-// OUTPUT from device. Removed YANG annotations made the name a string instead of a number.
-// 1. doecnt't like "@" : {}
+// OUTPUT from device. Removed YANG annotations and I made the unit name a string instead of a number.
+// 1. it doesnt't like "@" : {}
 // 2. got float64 type for field name, expect string
 const routerLo0 = `{
     "configuration" : {

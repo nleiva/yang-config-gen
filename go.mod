@@ -3,7 +3,7 @@ module github.com/nleiva/yang-config-gen
 go 1.23.4
 
 require (
-	github.com/nleiva/yang-data-structures v0.1.0
+	github.com/nleiva/yang-data-structures v0.1.5
 	github.com/openconfig/ygot v0.29.20
 	github.com/stretchr/testify v1.10.0
 )
