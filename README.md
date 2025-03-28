@@ -24,11 +24,11 @@ PASS
 ## Juniper
 
 I removed YANG annotations from the device output to give to `ygot` Unmarshal method. I also made the unit name a string instead of a number.
-// 1. it doesnt't like "@" : {}
-// 2. got float64 type for field name, expect string
+1. it doesnt't like "@" : {}
+2. got float64 type for field name, expect string
 
 ```json
-root@cPTX# show interfaces lo0 | display json 
+root@JunOS# show interfaces lo0 | display json 
 {
     "configuration" : {
         "@" : {
