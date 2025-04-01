@@ -1,23 +1,10 @@
 package model
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/stretchr/testify/assert"
-	"io"
 	"os"
 	"testing"
 )
-
-func ReadData(r io.Reader, object any) error {
-	d := json.NewDecoder(r)
-
-	err := d.Decode(object)
-	if err != nil {
-		return fmt.Errorf("can't decode object: %w", err)
-	}
-	return nil
-}
 
 func TestInterface(t *testing.T) {
 	tt := []struct {
@@ -77,7 +64,6 @@ func TestInterface(t *testing.T) {
 
 			assert.Equal(t, tc.length, len(target.Interfaces.Interface))
 			assert.Equal(t, tc.intf, target.Interfaces.Interface[tc.intf].Name)
-			// fmt.Printf("%v\n", input.Interfaces.Interface[tc.intf])
 
 			if tc.L2 {
 				iface := target.Interfaces.Interface[tc.intf]

@@ -1,11 +1,15 @@
 # Generating and reading YANG
 
-## Juniper
+## Generate to router
 
-### Generate to router
+### Juniper
+
+Translating OC'ish input to JunOS YANG.
+
+#### Interfaces
 
 ```bash
-cmd ⇨  go run main.go ../model/testdata/interface.json 
+$ go run main.go ../model/testdata/interface.json
 {
   "configuration": {
     "interfaces": {
@@ -54,7 +58,49 @@ cmd ⇨  go run main.go ../model/testdata/interface.json
 }
 ```
 
-### From router
+#### BGP
+
+```bash
+$ go run main.go ../model/testdata/bgp.json 
+{
+  "configuration": {
+    "routing-instances": {
+      "instance": [
+        {
+          "name": "ofce",
+          "protocols": {
+            "bgp": {
+              "group": [
+                {
+                  "export": [
+                    "ce-export-policy"
+                  ],
+                  "import": [
+                    "ce-import-policy"
+                  ],
+                  "name": "customers",
+                  "neighbor": [
+                    {
+                      "name": "10.99.99.1"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "routing-options": {
+            "autonomous-system": {
+              "as-number": "65001"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+## Parse JSON config from router
 
 I removed YANG annotations from the device output to give to `ygot` Unmarshal method. I also made the unit name a string instead of a number.
 1. it doesnt't like "@" : {}

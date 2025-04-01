@@ -1,0 +1,45 @@
+{
+    "network-instances": {
+        "network-instance": {
+            "testvrf": {
+                "config": {
+                    "description": "test_vrf",
+                    "enabled": true,
+                    "max-ecmp-routes": 10,
+                    "name": "testvrf",
+                    "route-distinguisher": "1.1.1.1:1",
+                    "router-id": "1.1.1.1",
+                    "type": "L3VPN"
+                },
+                "inter-instance-policies": {
+                    "apply-policy": {
+                        "config": {
+                            "export-policy": [
+                                "exp-policy1",
+                                "exp-policy2"
+                            ],
+                            "import-policy": [
+                                "imp-policy1",
+                                "imp-policy2"
+                            ]
+                        }
+                    }
+                },
+                "name": "testvrf",
+                "route-limits": {
+                    "route-limit": {
+                        "IPV4": {
+                            "afi": "IPV4",
+                            "config": {
+                                "afi": "IPV4",
+                                "alarm-threshold": 70,
+                                "maximum": 5,
+                                "warning-only": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

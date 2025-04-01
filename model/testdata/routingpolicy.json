@@ -1,0 +1,1241 @@
+{
+    "routing-policy": {
+        "defined-sets": {
+            "prefix-sets": {
+                "prefix-set": {
+                    "lando": {
+                        "name": "lando",
+                        "config": {
+                            "name": "lando",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "192.168.28.0/22 22..32": {
+                                    "ip-prefix": "192.168.28.0/22",
+                                    "masklength-range": "22..32",
+                                    "config": {
+                                        "ip-prefix": "192.168.28.0/22",
+                                        "masklength-range": "22..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "obiwan": {
+                        "name": "obiwan",
+                        "config": {
+                            "name": "obiwan",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "100.0.0.0/15 15..32": {
+                                    "ip-prefix": "100.0.0.0/15",
+                                    "masklength-range": "15..32",
+                                    "config": {
+                                        "ip-prefix": "100.0.0.0/15",
+                                        "masklength-range": "15..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "vader": {
+                        "name": "vader",
+                        "config": {
+                            "name": "vader",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "172.8.0.0/13 13..32": {
+                                    "ip-prefix": "172.8.0.0/13",
+                                    "masklength-range": "13..32",
+                                    "config": {
+                                        "ip-prefix": "172.8.0.0/13",
+                                        "masklength-range": "13..32"
+                                    }
+                                },
+                                "172.6.0.0/15 15..32": {
+                                    "ip-prefix": "172.6.0.0/15",
+                                    "masklength-range": "15..32",
+                                    "config": {
+                                        "ip-prefix": "172.6.0.0/15",
+                                        "masklength-range": "15..32"
+                                    }
+                                },
+                                "172.16.0.0/12 12..32": {
+                                    "ip-prefix": "172.16.0.0/12",
+                                    "masklength-range": "12..32",
+                                    "config": {
+                                        "ip-prefix": "172.16.0.0/12",
+                                        "masklength-range": "12..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "luke": {
+                        "name": "luke",
+                        "config": {
+                            "name": "luke",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "172.3.0.0/16 16..32": {
+                                    "ip-prefix": "172.3.0.0/16",
+                                    "masklength-range": "16..32",
+                                    "config": {
+                                        "ip-prefix": "172.3.0.0/16",
+                                        "masklength-range": "16..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "amidala": {
+                        "name": "amidala",
+                        "config": {
+                            "name": "amidala",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "172.2.0.0/16 16..32": {
+                                    "ip-prefix": "172.2.0.0/16",
+                                    "masklength-range": "16..32",
+                                    "config": {
+                                        "ip-prefix": "172.2.0.0/16",
+                                        "masklength-range": "16..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "leia": {
+                        "name": "leia",
+                        "config": {
+                            "name": "leia",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "10.10.0.0/15 15..32": {
+                                    "ip-prefix": "10.10.0.0/15",
+                                    "masklength-range": "15..32",
+                                    "config": {
+                                        "ip-prefix": "10.10.0.0/15",
+                                        "masklength-range": "15..32"
+                                    }
+                                },
+                                "100.0.0.0/10 10..32": {
+                                    "ip-prefix": "100.0.0.0/10",
+                                    "masklength-range": "10..32",
+                                    "config": {
+                                        "ip-prefix": "100.0.0.0/10",
+                                        "masklength-range": "10..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "palpatine": {
+                        "name": "palpatine",
+                        "config": {
+                            "name": "palpatine",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "100.30.0.0/15 15..32": {
+                                    "ip-prefix": "100.30.0.0/15",
+                                    "masklength-range": "15..32",
+                                    "config": {
+                                        "ip-prefix": "100.30.0.0/15",
+                                        "masklength-range": "15..32"
+                                    }
+                                },
+                                "192.18.0.0/15 15..32": {
+                                    "ip-prefix": "192.18.0.0/15",
+                                    "masklength-range": "15..32",
+                                    "config": {
+                                        "ip-prefix": "192.18.0.0/15",
+                                        "masklength-range": "15..32"
+                                    }
+                                },
+                                "100.29.0.0/16 16..32": {
+                                    "ip-prefix": "100.29.0.0/16",
+                                    "masklength-range": "16..32",
+                                    "config": {
+                                        "ip-prefix": "100.29.0.0/16",
+                                        "masklength-range": "16..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "han": {
+                        "name": "han",
+                        "config": {
+                            "name": "han",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "172.17.64.0/24 24..32": {
+                                    "ip-prefix": "172.17.64.0/24",
+                                    "masklength-range": "24..32",
+                                    "config": {
+                                        "ip-prefix": "172.17.64.0/24",
+                                        "masklength-range": "24..32"
+                                    }
+                                },
+                                "10.124.3.0/25 25..32": {
+                                    "ip-prefix": "10.124.3.0/25",
+                                    "masklength-range": "25..32",
+                                    "config": {
+                                        "ip-prefix": "10.124.3.0/25",
+                                        "masklength-range": "25..32"
+                                    }
+                                },
+                                "10.124.172.0/25 25..32": {
+                                    "ip-prefix": "10.124.172.0/25",
+                                    "masklength-range": "25..32",
+                                    "config": {
+                                        "ip-prefix": "10.124.172.0/25",
+                                        "masklength-range": "25..32"
+                                    }
+                                },
+                                "172.17.65.0/24 24..32": {
+                                    "ip-prefix": "172.17.65.0/24",
+                                    "masklength-range": "24..32",
+                                    "config": {
+                                        "ip-prefix": "172.17.65.0/24",
+                                        "masklength-range": "24..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "rfc1918": {
+                        "name": "rfc1918",
+                        "config": {
+                            "name": "rfc1918",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "172.16.0.0/12 12..32": {
+                                    "ip-prefix": "172.16.0.0/12",
+                                    "masklength-range": "12..32",
+                                    "config": {
+                                        "ip-prefix": "172.16.0.0/12",
+                                        "masklength-range": "12..32"
+                                    }
+                                },
+                                "10.0.0.0/8 8..32": {
+                                    "ip-prefix": "10.0.0.0/8",
+                                    "masklength-range": "8..32",
+                                    "config": {
+                                        "ip-prefix": "10.0.0.0/8",
+                                        "masklength-range": "8..32"
+                                    }
+                                },
+                                "192.168.0.0/16 16..32": {
+                                    "ip-prefix": "192.168.0.0/16",
+                                    "masklength-range": "16..32",
+                                    "config": {
+                                        "ip-prefix": "192.168.0.0/16",
+                                        "masklength-range": "16..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "yoda": {
+                        "name": "yoda",
+                        "config": {
+                            "name": "yoda",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "172.16.0.0/12 12..32": {
+                                    "ip-prefix": "172.16.0.0/12",
+                                    "masklength-range": "12..32",
+                                    "config": {
+                                        "ip-prefix": "172.16.0.0/12",
+                                        "masklength-range": "12..32"
+                                    }
+                                },
+                                "172.2.0.0/16 16..32": {
+                                    "ip-prefix": "172.2.0.0/16",
+                                    "masklength-range": "16..32",
+                                    "config": {
+                                        "ip-prefix": "172.2.0.0/16",
+                                        "masklength-range": "16..32"
+                                    }
+                                },
+                                "172.8.0.0/13 13..32": {
+                                    "ip-prefix": "172.8.0.0/13",
+                                    "masklength-range": "13..32",
+                                    "config": {
+                                        "ip-prefix": "172.8.0.0/13",
+                                        "masklength-range": "13..32"
+                                    }
+                                },
+                                "172.3.0.0/16 16..32": {
+                                    "ip-prefix": "172.3.0.0/16",
+                                    "masklength-range": "16..32",
+                                    "config": {
+                                        "ip-prefix": "172.3.0.0/16",
+                                        "masklength-range": "16..32"
+                                    }
+                                },
+                                "100.0.0.0/15 15..32": {
+                                    "ip-prefix": "100.0.0.0/15",
+                                    "masklength-range": "15..32",
+                                    "config": {
+                                        "ip-prefix": "100.0.0.0/15",
+                                        "masklength-range": "15..32"
+                                    }
+                                },
+                                "172.6.0.0/15 15..32": {
+                                    "ip-prefix": "172.6.0.0/15",
+                                    "masklength-range": "15..32",
+                                    "config": {
+                                        "ip-prefix": "172.6.0.0/15",
+                                        "masklength-range": "15..32"
+                                    }
+                                },
+                                "192.168.28.0/22 22..32": {
+                                    "ip-prefix": "192.168.28.0/22",
+                                    "masklength-range": "22..32",
+                                    "config": {
+                                        "ip-prefix": "192.168.28.0/22",
+                                        "masklength-range": "22..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "chewbacca": {
+                        "name": "chewbacca",
+                        "config": {
+                            "name": "chewbacca",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "199.105.176.192/26 32..32": {
+                                    "ip-prefix": "199.105.176.192/26",
+                                    "masklength-range": "32..32",
+                                    "config": {
+                                        "ip-prefix": "199.105.176.192/26",
+                                        "masklength-range": "32..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "maul": {
+                        "name": "maul",
+                        "config": {
+                            "name": "maul",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "203.0.113.0/24 24..32": {
+                                    "ip-prefix": "203.0.113.0/24",
+                                    "masklength-range": "24..32",
+                                    "config": {
+                                        "ip-prefix": "203.0.113.0/24",
+                                        "masklength-range": "24..32"
+                                    }
+                                },
+                                "198.51.100./24 24..32": {
+                                    "ip-prefix": "198.51.100./24",
+                                    "masklength-range": "24..32",
+                                    "config": {
+                                        "ip-prefix": "198.51.100./24",
+                                        "masklength-range": "24..32"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "anakin": {
+                        "name": "anakin",
+                        "config": {
+                            "name": "anakin",
+                            "mode": "IPV4"
+                        },
+                        "prefixes": {
+                            "prefix": {
+                                "192.168.90.0/23 23..32": {
+                                    "ip-prefix": "192.168.90.0/23",
+                                    "masklength-range": "23..32",
+                                    "config": {
+                                        "ip-prefix": "192.168.90.0/23",
+                                        "masklength-range": "23..32"
+                                    }
+                                },
+                                "100.64.216.0/24 24..32": {
+                                    "ip-prefix": "100.64.216.0/24",
+                                    "masklength-range": "24..32",
+                                    "config": {
+                                        "ip-prefix": "100.64.216.0/24",
+                                        "masklength-range": "24..32"
+                                    }
+                                },
+                                "100.64.240.0/22 22..32": {
+                                    "ip-prefix": "100.64.240.0/22",
+                                    "masklength-range": "22..32",
+                                    "config": {
+                                        "ip-prefix": "100.64.240.0/22",
+                                        "masklength-range": "22..32"
+                                    }
+                                },
+                                "100.64.217.0/24 24..32": {
+                                    "ip-prefix": "100.64.217.0/24",
+                                    "masklength-range": "24..32",
+                                    "config": {
+                                        "ip-prefix": "100.64.217.0/24",
+                                        "masklength-range": "24..32"
+                                    }
+                                },
+                                "100.64.210.0/23 23..32": {
+                                    "ip-prefix": "100.64.210.0/23",
+                                    "masklength-range": "23..32",
+                                    "config": {
+                                        "ip-prefix": "100.64.210.0/23",
+                                        "masklength-range": "23..32"
+                                    }
+                                },
+                                "192.168.98.0/23 23..32": {
+                                    "ip-prefix": "192.168.98.0/23",
+                                    "masklength-range": "23..32",
+                                    "config": {
+                                        "ip-prefix": "192.168.98.0/23",
+                                        "masklength-range": "23..32"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "bgp-defined-sets": {
+                "community-sets": {
+                    "community-set": {
+                        "r2d2": {
+                            "community-set-name": "r2d2",
+                            "config": {
+                                "community-set-name": "r2d2",
+                                "replace-config": true,
+                                "community-member": [
+                                    "64496:509"
+                                ]
+                            }
+                        },
+                        "yoda": {
+                            "community-set-name": "yoda",
+                            "config": {
+                                "community-set-name": "yoda",
+                                "replace-config": true,
+                                "community-member": [
+                                    "64496:519"
+                                ]
+                            }
+                        },
+                        "yoda-b": {
+                            "community-set-name": "yoda-b",
+                            "config": {
+                                "community-set-name": "yoda-b",
+                                "replace-config": true,
+                                "community-member": [
+                                    "64496:539"
+                                ]
+                            }
+                        },
+                        "r2d2-b": {
+                            "community-set-name": "r2d2-b",
+                            "config": {
+                                "community-set-name": "r2d2-b",
+                                "replace-config": true,
+                                "community-member": [
+                                    "64496:529"
+                                ]
+                            }
+                        },
+                        "wedge": {
+                            "community-set-name": "wedge",
+                            "config": {
+                                "community-set-name": "wedge",
+                                "replace-config": true,
+                                "community-member": [
+                                    "origin:100.0.0.0:1"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "ext-community-sets": {
+                    "ext-community-set": {
+                        "skywalker": {
+                            "ext-community-set-name": "skywalker",
+                            "config": {
+                                "ext-community-set-name": "skywalker",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:64498:1"
+                                ]
+                            }
+                        },
+                        "barriss": {
+                            "ext-community-set-name": "barriss",
+                            "config": {
+                                "ext-community-set-name": "barriss",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:100.64.2.0:22"
+                                ]
+                            }
+                        },
+                        "aurra": {
+                            "ext-community-set-name": "aurra",
+                            "config": {
+                                "ext-community-set-name": "aurra",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:64498:21"
+                                ]
+                            }
+                        },
+                        "aayla": {
+                            "ext-community-set-name": "aayla",
+                            "config": {
+                                "ext-community-set-name": "aayla",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:64496:2"
+                                ]
+                            }
+                        },
+                        "sheev": {
+                            "ext-community-set-name": "sheev",
+                            "config": {
+                                "ext-community-set-name": "sheev",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:100.64.2.0:32"
+                                ]
+                            }
+                        },
+                        "greedo": {
+                            "ext-community-set-name": "greedo",
+                            "config": {
+                                "ext-community-set-name": "greedo",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:64496:1"
+                                ]
+                            }
+                        },
+                        "motti": {
+                            "ext-community-set-name": "motti",
+                            "config": {
+                                "ext-community-set-name": "motti",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:64497:100"
+                                ]
+                            }
+                        },
+                        "dameron": {
+                            "ext-community-set-name": "dameron",
+                            "config": {
+                                "ext-community-set-name": "dameron",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:64498:31"
+                                ]
+                            }
+                        },
+                        "luminara": {
+                            "ext-community-set-name": "luminara",
+                            "config": {
+                                "ext-community-set-name": "luminara",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:64499:20"
+                                ]
+                            }
+                        },
+                        "kylo": {
+                            "ext-community-set-name": "kylo",
+                            "config": {
+                                "ext-community-set-name": "kylo",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:64498:2"
+                                ]
+                            }
+                        },
+                        "fett": {
+                            "ext-community-set-name": "fett",
+                            "config": {
+                                "ext-community-set-name": "fett",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:64497:101"
+                                ]
+                            }
+                        },
+                        "rey": {
+                            "ext-community-set-name": "rey",
+                            "config": {
+                                "ext-community-set-name": "rey",
+                                "replace-config": true,
+                                "ext-community-member": [
+                                    "target:64499:30"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "policy-definitions": {
+            "policy-definition": {
+                "jinn": {
+                    "name": "jinn",
+                    "config": {
+                        "name": "jinn",
+                        "default-action": "REJECT_ROUTE"
+                    },
+                    "statements": {
+                        "statement": {
+                            "yaddle": {
+                                "name": "yaddle",
+                                "config": {
+                                    "statement-name": "yaddle",
+                                    "name": "yaddle",
+                                    "seq": 10
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "ACCEPT_ROUTE"
+                                    }
+                                },
+                                "conditions": {
+                                    "bgp-conditions": {
+                                        "config": {
+                                            "ext-community-set": "greedo"
+                                        }
+                                    }
+                                }
+                            },
+                            "binks": {
+                                "name": "binks",
+                                "config": {
+                                    "statement-name": "binks",
+                                    "name": "binks",
+                                    "seq": 20
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "ACCEPT_ROUTE"
+                                    }
+                                },
+                                "conditions": {
+                                    "bgp-conditions": {
+                                        "config": {
+                                            "ext-community-set": "skywalker"
+                                        }
+                                    }
+                                }
+                            },
+                            "jango": {
+                                "name": "jango",
+                                "config": {
+                                    "statement-name": "jango",
+                                    "name": "jango",
+                                    "seq": 30
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "ACCEPT_ROUTE"
+                                    }
+                                },
+                                "conditions": {
+                                    "bgp-conditions": {
+                                        "config": {
+                                            "ext-community-set": "luminara"
+                                        }
+                                    }
+                                }
+                            },
+                            "mandalorian": {
+                                "name": "mandalorian",
+                                "config": {
+                                    "statement-name": "mandalorian",
+                                    "name": "mandalorian",
+                                    "seq": 40
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "ACCEPT_ROUTE"
+                                    }
+                                },
+                                "conditions": {
+                                    "bgp-conditions": {
+                                        "config": {
+                                            "ext-community-set": "aurra"
+                                        }
+                                    }
+                                }
+                            },
+                            "quinlan": {
+                                "name": "quinlan",
+                                "config": {
+                                    "statement-name": "quinlan",
+                                    "name": "quinlan",
+                                    "seq": 50
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "ACCEPT_ROUTE"
+                                    }
+                                },
+                                "conditions": {
+                                    "bgp-conditions": {
+                                        "config": {
+                                            "ext-community-set": "motti"
+                                        }
+                                    }
+                                }
+                            },
+                            "boba": {
+                                "name": "boba",
+                                "config": {
+                                    "statement-name": "boba",
+                                    "name": "boba",
+                                    "seq": 60
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "ACCEPT_ROUTE"
+                                    }
+                                },
+                                "conditions": {
+                                    "bgp-conditions": {
+                                        "config": {
+                                            "ext-community-set": "barriss"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "rose": {
+                    "name": "rose",
+                    "config": {
+                        "name": "rose",
+                        "default-action": "REJECT_ROUTE"
+                    },
+                    "statements": {
+                        "statement": {
+                            "yaddle": {
+                                "name": "yaddle",
+                                "config": {
+                                    "statement-name": "yaddle",
+                                    "name": "yaddle",
+                                    "seq": 10
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "NEXT_ENTRY"
+                                    },
+                                    "bgp-actions": {
+                                        "set-ext-community": {
+                                            "config": {
+                                                "method": "REFERENCE",
+                                                "options": "ADD"
+                                            },
+                                            "reference": {
+                                                "config": {
+                                                    "ext-community-set-ref": "aayla"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "conditions": {
+                                    "config": {
+                                        "call-policies": [
+                                            "obiwan",
+                                            "amidala",
+                                            "luke",
+                                            "grogu",
+                                            "lando",
+                                            "tarkin"
+                                        ]
+                                    }
+                                }
+                            },
+                            "binks": {
+                                "name": "binks",
+                                "config": {
+                                    "statement-name": "binks",
+                                    "name": "binks",
+                                    "seq": 20
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "NEXT_ENTRY"
+                                    },
+                                    "bgp-actions": {
+                                        "set-ext-community": {
+                                            "config": {
+                                                "method": "REFERENCE",
+                                                "options": "ADD"
+                                            },
+                                            "reference": {
+                                                "config": {
+                                                    "ext-community-set-ref": "kylo"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "conditions": {
+                                    "config": {
+                                        "call-policies": [
+                                            "obiwan",
+                                            "amidala",
+                                            "luke",
+                                            "grogu",
+                                            "lando",
+                                            "tarkin"
+                                        ]
+                                    }
+                                }
+                            },
+                            "jango": {
+                                "name": "jango",
+                                "config": {
+                                    "statement-name": "jango",
+                                    "name": "jango",
+                                    "seq": 30
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "NEXT_ENTRY"
+                                    },
+                                    "bgp-actions": {
+                                        "set-ext-community": {
+                                            "config": {
+                                                "method": "REFERENCE",
+                                                "options": "ADD"
+                                            },
+                                            "reference": {
+                                                "config": {
+                                                    "ext-community-set-ref": "rey"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "conditions": {
+                                    "config": {
+                                        "call-policies": [
+                                            "vader",
+                                            "palpatine",
+                                            "leia",
+                                            "kenobi"
+                                        ]
+                                    }
+                                }
+                            },
+                            "mandalorian": {
+                                "name": "mandalorian",
+                                "config": {
+                                    "statement-name": "mandalorian",
+                                    "name": "mandalorian",
+                                    "seq": 40
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "NEXT_ENTRY"
+                                    },
+                                    "bgp-actions": {
+                                        "set-ext-community": {
+                                            "config": {
+                                                "method": "REFERENCE",
+                                                "options": "ADD"
+                                            },
+                                            "reference": {
+                                                "config": {
+                                                    "ext-community-set-ref": "dameron"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "conditions": {
+                                    "config": {
+                                        "call-policies": [
+                                            "vader",
+                                            "palpatine",
+                                            "leia",
+                                            "kenobi"
+                                        ]
+                                    }
+                                }
+                            },
+                            "quinlan": {
+                                "name": "quinlan",
+                                "config": {
+                                    "statement-name": "quinlan",
+                                    "name": "quinlan",
+                                    "seq": 50
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "NEXT_ENTRY"
+                                    },
+                                    "bgp-actions": {
+                                        "set-ext-community": {
+                                            "config": {
+                                                "method": "REFERENCE",
+                                                "options": "ADD"
+                                            },
+                                            "reference": {
+                                                "config": {
+                                                    "ext-community-set-ref": "fett"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "conditions": {
+                                    "config": {
+                                        "call-policies": [
+                                            "vader",
+                                            "palpatine",
+                                            "leia",
+                                            "kenobi"
+                                        ]
+                                    }
+                                }
+                            },
+                            "boba": {
+                                "name": "boba",
+                                "config": {
+                                    "statement-name": "boba",
+                                    "name": "boba",
+                                    "seq": 60
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "NEXT_ENTRY"
+                                    },
+                                    "bgp-actions": {
+                                        "set-ext-community": {
+                                            "config": {
+                                                "method": "REFERENCE",
+                                                "options": "ADD"
+                                            },
+                                            "reference": {
+                                                "config": {
+                                                    "ext-community-set-ref": "sheev"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "conditions": {
+                                    "config": {
+                                        "call-policies": [
+                                            "vader",
+                                            "palpatine",
+                                            "leia",
+                                            "kenobi"
+                                        ]
+                                    }
+                                }
+                            },
+                            "_last_": {
+                                "name": "_last_",
+                                "config": {
+                                    "statement-name": "_last_",
+                                    "name": "_last_",
+                                    "seq": 999999
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "ACCEPT_ROUTE"
+                                    }
+                                },
+                                "conditions": {
+                                    "bgp-conditions": {
+                                        "config": {
+                                            "ext-community-set": "any-rt"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "greedo": {
+                    "name": "greedo",
+                    "config": {
+                        "name": "greedo",
+                        "default-action": "ACCEPT_ROUTE"
+                    },
+                    "statements": {
+                        "statement": {
+                            "delete-rt": {
+                                "name": "delete-rt",
+                                "config": {
+                                    "statement-name": "delete-rt",
+                                    "name": "delete-rt",
+                                    "seq": 10,
+                                    "description": "delete-rt"
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "NEXT_ENTRY"
+                                    },
+                                    "bgp-actions": {
+                                        "set-ext-community": {
+                                            "config": {
+                                                "method": "REFERENCE",
+                                                "options": "REMOVE"
+                                            },
+                                            "reference": {
+                                                "config": {
+                                                    "ext-community-set-ref": "any-rt"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "reject": {
+                                "name": "reject",
+                                "config": {
+                                    "statement-name": "reject",
+                                    "name": "reject",
+                                    "seq": 20,
+                                    "description": "reject"
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "REJECT_ROUTE"
+                                    }
+                                },
+                                "conditions": {
+                                    "config": {
+                                        "call-policies": [
+                                            "maul",
+                                            "anakin",
+                                            "han"
+                                        ]
+                                    }
+                                }
+                            },
+                            "add-polarity": {
+                                "name": "add-polarity",
+                                "config": {
+                                    "statement-name": "add-polarity",
+                                    "name": "add-polarity",
+                                    "seq": 30,
+                                    "description": "add-polarity"
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "NEXT_ENTRY"
+                                    },
+                                    "bgp-actions": {
+                                        "set-community": {
+                                            "config": {
+                                                "method": "REFERENCE",
+                                                "options": "ADD"
+                                            },
+                                            "reference": {
+                                                "config": {
+                                                    "community-set-ref": "r2d2"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "add-soo": {
+                                "name": "add-soo",
+                                "config": {
+                                    "statement-name": "add-soo",
+                                    "name": "add-soo",
+                                    "seq": 40,
+                                    "description": "add-soo"
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "ACCEPT_ROUTE"
+                                    },
+                                    "bgp-actions": {
+                                        "set-ext-community": {
+                                            "config": {
+                                                "method": "REFERENCE",
+                                                "options": "ADD"
+                                            },
+                                            "reference": {
+                                                "config": {
+                                                    "ext-community-set-ref": "wedge"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "secura": {
+                    "name": "secura",
+                    "config": {
+                        "name": "secura",
+                        "default-action": "REJECT_ROUTE"
+                    },
+                    "statements": {
+                        "statement": {
+                            "delete-rt": {
+                                "name": "delete-rt",
+                                "config": {
+                                    "statement-name": "delete-rt",
+                                    "name": "delete-rt",
+                                    "seq": 10,
+                                    "description": "delete-rt"
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "NEXT_ENTRY"
+                                    },
+                                    "bgp-actions": {
+                                        "set-ext-community": {
+                                            "config": {
+                                                "method": "REFERENCE",
+                                                "options": "REMOVE"
+                                            },
+                                            "reference": {
+                                                "config": {
+                                                    "ext-community-set-ref": "any-rt"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "reject-soo": {
+                                "name": "reject-soo",
+                                "config": {
+                                    "statement-name": "reject-soo",
+                                    "name": "reject-soo",
+                                    "seq": 20,
+                                    "description": "reject-soo"
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "REJECT_ROUTE"
+                                    }
+                                },
+                                "conditions": {
+                                    "bgp-conditions": {
+                                        "config": {
+                                            "ext-community-set": "wedge"
+                                        }
+                                    }
+                                }
+                            },
+                            "reject": {
+                                "name": "reject",
+                                "config": {
+                                    "statement-name": "reject",
+                                    "name": "reject",
+                                    "seq": 30,
+                                    "description": "reject"
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "REJECT_ROUTE"
+                                    }
+                                },
+                                "conditions": {
+                                    "config": {
+                                        "call-policies": [
+                                            "yoda",
+                                            "rfc1918",
+                                            "chewbacca"
+                                        ]
+                                    }
+                                }
+                            },
+                            "accept-yoda": {
+                                "name": "accept-yoda",
+                                "config": {
+                                    "statement-name": "accept-yoda",
+                                    "name": "accept-yoda",
+                                    "seq": 40,
+                                    "description": "accept-yoda"
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "ACCEPT_ROUTE"
+                                    },
+                                    "bgp-actions": {
+                                        "config": {
+                                            "set-med": 3
+                                        }
+                                    }
+                                },
+                                "conditions": {
+                                    "bgp-conditions": {
+                                        "config": {
+                                            "community-set": "yoda"
+                                        }
+                                    }
+                                }
+                            },
+                            "accept": {
+                                "name": "accept",
+                                "config": {
+                                    "statement-name": "accept",
+                                    "name": "accept",
+                                    "seq": 50,
+                                    "description": "accept"
+                                },
+                                "actions": {
+                                    "config": {
+                                        "policy-result": "ACCEPT_ROUTE"
+                                    },
+                                    "bgp-actions": {
+                                        "config": {
+                                            "set-med": 1
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

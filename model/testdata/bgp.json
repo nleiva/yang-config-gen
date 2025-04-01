@@ -1,0 +1,172 @@
+{
+    "network-instances": {
+        "network-instance": {
+            "ofce": {
+                "protocols": {
+                    "protocol": {
+                        "BGP": {
+                            "identifier": "BGP",
+                            "name": "BGP",
+                            "config": {
+                                "enabled": true,
+                                "identifier": "BGP",
+                                "name": "BGP"
+                            },
+                            "bgp": {
+                                "global": {
+                                    "config": {
+                                        "as": 65001,
+                                        "peer-ip-track": true,
+                                        "rapid-withdrawal": true
+                                    },
+                                    "graceful-restart": {
+                                        "config": {
+                                            "enabled": true
+                                        }
+                                    },
+                                    "policy_default": {
+                                        "ebgp": {
+                                            "config": {
+                                                "export-default-reject": true,
+                                                "import-default-reject": true
+                                            }
+                                        }
+                                    },
+                                    "use-multiple-paths": {
+                                        "config": {
+                                            "enabled": true
+                                        },
+                                        "ebgp": {
+                                            "config": {
+                                                "allow-multiple-as": true,
+                                                "maximum-paths": 16
+                                            }
+                                        },
+                                        "ibgp": {
+                                            "config": {
+                                                "maximum-paths": 16
+                                            }
+                                        }
+                                    }
+                                },
+                                "peer-groups": {
+                                    "peer-group": {
+                                        "customers": {
+                                            "afi-safis": {
+                                                "afi-safi": {
+                                                    "IPV4_UNICAST": {
+                                                        "afi-safi-name": "IPV4_UNICAST",
+                                                        "config": {
+                                                            "afi-safi-name": "IPV4_UNICAST",
+                                                            "enabled": true
+                                                        },
+                                                        "ipv4-unicast": {
+                                                            "prefix-limit": {
+                                                                "config": {
+                                                                    "max-prefixes": 1000,
+                                                                    "prevent-teardown": true,
+                                                                    "warning-threshold-pct": 70
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "L3VPN_IPV4_UNICAST": {
+                                                        "afi-safi-name": "L3VPN_IPV4_UNICAST",
+                                                        "config": {
+                                                            "afi-safi-name": "L3VPN_IPV4_UNICAST",
+                                                            "enabled": true
+                                                        }
+                                                    },
+                                                    "RT_MEMBERSHIP": {
+                                                        "afi-safi-name": "RT_MEMBERSHIP",
+                                                        "config": {
+                                                            "afi-safi-name": "RT_MEMBERSHIP",
+                                                            "enabled": true
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "apply-policy": {
+                                                "config": {
+                                                    "export-policy": [
+                                                        "ce-export-policy"
+                                                    ],
+                                                    "import-policy": [
+                                                        "ce-import-policy"
+                                                    ]
+                                                }
+                                            },
+                                            "as-path-options": {
+                                                "config": {
+                                                    "replace-peer-as": true
+                                                }
+                                            },
+                                            "config": {
+                                                "description": "customers",
+                                                "enabled": true,
+                                                "local-as": 65000,
+                                                "next-hop-self": true,
+                                                "next-hop-unchanged": true,
+                                                "peer-as": 65002,
+                                                "peer-group-name": "customers",
+                                                "peer-type": "EXTERNAL",
+                                                "remove-private-as": "PRIVATE_AS_REMOVE_ALL",
+                                                "split-horizon": true
+                                            },
+                                            "peer-group-name": "customers",
+                                            "timers": {
+                                                "config": {
+                                                    "hold-time": 40,
+                                                    "keepalive-interval": 10
+                                                }
+                                            },
+                                            "transport": {
+                                                "config": {
+                                                    "local-address": "192.168.0.1"
+                                                }
+                                            },
+                                            "use-multiple-paths": {
+                                                "config": {
+                                                    "enabled": true
+                                                },
+                                                "ebgp": {
+                                                    "config": {
+                                                        "maximum-paths": 16
+                                                    }
+                                                },
+                                                "ibgp": {
+                                                    "config": {
+                                                        "maximum-paths": 16
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "neighbors": {
+                                    "neighbor": {
+                                        "10.99.99.1": {
+                                            "neighbor-address": "10.99.99.1",
+                                            "config": {
+                                                "neighbor-address": "10.99.99.1",
+                                                "peer-as": 65002,
+                                                "description": "cust_a",
+                                                "enabled": true,
+                                                "peer-group": "customers"
+                                            },
+                                            "enable-bfd": {
+                                                "config": {
+                                                    "enabled": true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

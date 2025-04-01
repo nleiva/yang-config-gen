@@ -38,11 +38,17 @@ func (r Juniper) CompileConfig(in model.Target) error {
 		}
 	}
 
-	// Compile BGP config
-	if len(in.BGPSessions) > 0 || len(in.NetworkInstances.NetworkInstance) > 0 {
+	// Compile NetworkInstances config
+	ni := in.NetworkInstances.NetworkInstance
+	if len(ni) > 0 {
 		err := r.CreateRoutingInstancesConfig(in)
 		if err != nil {
 			return fmt.Errorf("can't compile routing instance config: %w", err)
+		}
+
+		err = r.CreateBGPConfig(in)
+		if err != nil {
+			return fmt.Errorf("can't compile BGP config: %w", err)
 		}
 
 		err = r.CreateRoutingOptsConfig(in)
@@ -168,29 +174,50 @@ func (r Juniper) CreateRoutingInstancesConfig(in model.Target) error {
 					_ = instance.GetOrCreateInterface(iname)
 				}
 			}
-
 		}
 	}
+	err := ri.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid routing instances config: %s", err)
+	}
+	return nil
+}
 
-	for _, bgpSession := range in.BGPSessions {
-		bgp := ri.GetOrCreateInstance(bgpSession.VRF).GetOrCreateProtocols().GetOrCreateBgp()
-		group := bgp.GetOrCreateGroup(bgpSession.Group)
-		neighbor := group.GetOrCreateNeighbor(bgpSession.Neighbor.String())
+func (r Juniper) CreateBGPConfig(in model.Target) error {
+	if len(in.NetworkInstances.NetworkInstance) < 1 {
+		return nil
+	}
 
-		localIP, err := netip.ParsePrefix(bgpSession.LocalAddress.String())
-		if err != nil {
-			return err
+	ri := r.root.Configuration.GetOrCreateRoutingInstances()
+
+	for name, ni := range in.NetworkInstances.NetworkInstance {
+		if len(ni.Protocols.Protocol) < 1 {
+			return nil
+		}
+		protocol, ok := ni.Protocols.Protocol["BGP"]
+		if !ok {
+			continue
 		}
 
-		localIPStr := localIP.Addr().String()
+		for groupname, bgpGroup := range protocol.BGP.PeerGroups.PeerGroup {
+			instance := ri.GetOrCreateInstance(name)
 
-		neighbor.LocalAddress = &localIPStr
-		PeerAS := strconv.FormatInt(bgpSession.PeerAS, 10)
-		neighbor.PeerAs = &PeerAS
+			bgp := instance.GetOrCreateProtocols().GetOrCreateBgp()
+			group := bgp.GetOrCreateGroup(groupname)
+			group.Export = bgpGroup.ApplyPolicy.Config.ExportPolicy
+			group.Import = bgpGroup.ApplyPolicy.Config.ImportPolicy
 
-		if bgpSession.Status == "offline" {
-			neighbor.GetOrCreateShutdown()
 		}
+
+		for _, bgpNeighbor := range protocol.BGP.Neighbors.Neighbor {
+			instance := ri.GetOrCreateInstance(name)
+
+			bgp := instance.GetOrCreateProtocols().GetOrCreateBgp()
+
+			group := bgp.GetOrCreateGroup(bgpNeighbor.Config.PeerGroup)
+			group.GetOrCreateNeighbor(bgpNeighbor.Config.NeighborAddress)
+		}
+
 	}
 
 	err := ri.Validate()
@@ -201,15 +228,33 @@ func (r Juniper) CreateRoutingInstancesConfig(in model.Target) error {
 }
 
 func (r Juniper) CreateRoutingOptsConfig(in model.Target) error {
-	if in.ASN == 0 {
-		return nil
+	ri := r.root.Configuration.GetOrCreateRoutingInstances()
+
+	if len(in.NetworkInstances.NetworkInstance) > 0 {
+		for name, netInst := range in.NetworkInstances.NetworkInstance {
+			instance := ri.GetOrCreateInstance(name)
+
+			protocol, ok := netInst.Protocols.Protocol["BGP"]
+			if !ok {
+				continue
+			}
+
+			ASN := protocol.BGP.Global.Config.As
+
+			if ASN != 0 {
+				a := strconv.Itoa(protocol.BGP.Global.Config.As)
+				instance.GetOrCreateRoutingOptions().GetOrCreateAutonomousSystem().AsNumber = &a
+			}
+
+			if len(netInst.Interfaces.Interface) > 0 {
+				for iname, _ := range netInst.Interfaces.Interface {
+					_ = instance.GetOrCreateInterface(iname)
+				}
+			}
+		}
 	}
 
-	as := r.root.Configuration.GetOrCreateRoutingOptions().GetOrCreateAutonomousSystem()
-	ASN := strconv.FormatInt(in.ASN, 10)
-	as.AsNumber = &ASN
-
-	err := as.Validate()
+	err := ri.Validate()
 	if err != nil {
 		return fmt.Errorf("invalid routing options config: %w", err)
 	}
