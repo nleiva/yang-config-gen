@@ -6,7 +6,7 @@ DARWIN=$(EXECUTABLE)_darwin_amd64
 
 all: test build
 
-upstream: check-env ## Make sure you TAG correctly. E.g. export TAG=0.1.2
+upstream: check-env ## Make sure you TAG correctly. E.g. export TAG=0.1.3
 	git add .
 	git commit -m "Bump to version ${TAG}"
 	git tag -a -m "Bump to version ${TAG}" v${TAG}
