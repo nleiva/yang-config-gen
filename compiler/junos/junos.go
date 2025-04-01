@@ -5,8 +5,8 @@ import (
 	"net/netip"
 	"strconv"
 
-	"github.com/nleiva/yang-data-structures/junos"
 	"github.com/nleiva/yang-config-gen/model"
+	"github.com/nleiva/yang-data-structures/junos"
 	"github.com/openconfig/ygot/ygot"
 )
 
@@ -31,7 +31,7 @@ func (r Juniper) GetPlatform() string {
 
 func (r Juniper) CompileConfig(in model.Target) error {
 	// Compile interfaces config
-	if len(in.Interfaces) > 0 {
+	if len(in.Interfaces.Interface) > 0 {
 		err := r.CreateIntConfig(in)
 		if err != nil {
 			return fmt.Errorf("can't compile interface config: %w", err)
@@ -39,7 +39,7 @@ func (r Juniper) CompileConfig(in model.Target) error {
 	}
 
 	// Compile BGP config
-	if len(in.BGPSessions) > 0 {
+	if len(in.BGPSessions) > 0 || len(in.NetworkInstances.NetworkInstance) > 0 {
 		err := r.CreateRoutingInstancesConfig(in)
 		if err != nil {
 			return fmt.Errorf("can't compile routing instance config: %w", err)
@@ -55,31 +55,95 @@ func (r Juniper) CompileConfig(in model.Target) error {
 }
 
 func (r Juniper) CreateIntConfig(in model.Target) error {
+	if len(in.Interfaces.Interface) < 1 {
+		return nil
+	}
+
 	// Create interface root config
 	intfs := r.root.Configuration.GetOrCreateInterfaces()
 
-	for _, iface := range in.Interfaces {
-		if iface.Name == "" {
+	for name, iface := range in.Interfaces.Interface {
+		if name == "" {
 			return fmt.Errorf("can't create interface without a name")
 		}
-		intf := intfs.GetOrCreateInterface(iface.Name)
+		intf := intfs.GetOrCreateInterface(name)
 
-		if iface.Unit == "" {
-			if iface.Description != "" {
-				intf.Description = &iface.Description
+		cfg := iface.Config
+		// if !cfg.Enabled {
+		// 	intf.Disable = true
+		// }
+		if cfg.MTU != 0 {
+			intf.Mtu = junos.UnionUint32(iface.Config.MTU)
+		}
+
+		eth := iface.Ethernet
+		if eth.SwitchedVLAN.Config.NativeVlan != 0 {
+			intf.NativeVlanId = junos.UnionUint32(eth.SwitchedVLAN.Config.NativeVlan)
+		}
+
+		ethCfg := eth.Config
+		switch ethCfg.PortSpeed {
+		case 1000:
+			intf.Speed = junos.JunosConfRoot_Configuration_Interfaces_Interface_Speed_1g
+		case 10000:
+			intf.Speed = junos.JunosConfRoot_Configuration_Interfaces_Interface_Speed_10g
+		case 100000:
+			intf.Speed = junos.JunosConfRoot_Configuration_Interfaces_Interface_Speed_100g
+		default:
+			intf.Speed = junos.JunosConfRoot_Configuration_Interfaces_Interface_Speed_UNSET
+		}
+
+		if ethCfg.DuplexMode != "" {
+			switch ethCfg.DuplexMode {
+			case "FULL":
+				intf.LinkMode = junos.JunosConfRoot_Configuration_Interfaces_Interface_LinkMode_full_duplex
+			default:
+				intf.LinkMode = junos.JunosConfRoot_Configuration_Interfaces_Interface_LinkMode_automatic
+			}
+		}
+
+		if ethCfg.Encapsulation != "" {
+			switch ethCfg.Encapsulation {
+			case "dot1q":
+				intf.Encapsulation = junos.JunosConfRoot_Configuration_Interfaces_Interface_Encapsulation_vlan_ccc
+			default:
+				intf.Encapsulation = junos.JunosConfRoot_Configuration_Interfaces_Interface_Encapsulation_ethernet
+			}
+		}
+
+		if len(iface.Subinterfaces.SubInterface) < 1 {
+			if iface.Config.Description != "" {
+				intf.Description = &iface.Config.Description
 			}
 			continue
 		}
-		unit, err := intf.NewUnit(iface.Unit)
-		if err != nil {
-			return fmt.Errorf("can't compile interface unit: %w", err)
-		}
 
-		if iface.Description != "" {
-			unit.Description = &iface.Description
-		}
-		if iface.Address.IsValid() {
-			unit.GetOrCreateFamily().GetOrCreateInet().GetOrCreateAddress(iface.Address.String())
+		for idx, subintf := range iface.Subinterfaces.SubInterface {
+
+			unit, err := intf.NewUnit(idx)
+			if err != nil {
+				return fmt.Errorf("can't compile interface unit: %w", err)
+			}
+
+			if len(eth.SwitchedVLAN.Config.TrunkVlans) != 0 {
+				for _, vlan := range eth.SwitchedVLAN.Config.TrunkVlans {
+					unit.VlanIdList = append(unit.VlanIdList, strconv.Itoa(vlan))
+				}
+			}
+
+			if subintf.Config.Description != "" {
+				unit.Description = &subintf.Config.Description
+			}
+			if len(subintf.IPv4.Addresses.Address) > 0 {
+				for _, address := range subintf.IPv4.Addresses.Address {
+					addr, err := netip.ParseAddr(address.Config.IP)
+					if err != nil {
+						return fmt.Errorf("invalid IP address %v: %w", address.Config.IP, err)
+					}
+					prefix := netip.PrefixFrom(addr, address.Config.PrefixLength)
+					unit.GetOrCreateFamily().GetOrCreateInet().GetOrCreateAddress(prefix.String())
+				}
+			}
 		}
 	}
 
@@ -94,6 +158,19 @@ func (r Juniper) CreateIntConfig(in model.Target) error {
 func (r Juniper) CreateRoutingInstancesConfig(in model.Target) error {
 	// Create routing instance root config
 	ri := r.root.Configuration.GetOrCreateRoutingInstances()
+
+	if len(in.NetworkInstances.NetworkInstance) > 0 {
+		for name, ni := range in.NetworkInstances.NetworkInstance {
+			instance := ri.GetOrCreateInstance(name)
+
+			if len(ni.Interfaces.Interface) > 0 {
+				for iname, _ := range ni.Interfaces.Interface {
+					_ = instance.GetOrCreateInterface(iname)
+				}
+			}
+
+		}
+	}
 
 	for _, bgpSession := range in.BGPSessions {
 		bgp := ri.GetOrCreateInstance(bgpSession.VRF).GetOrCreateProtocols().GetOrCreateBgp()
@@ -124,6 +201,10 @@ func (r Juniper) CreateRoutingInstancesConfig(in model.Target) error {
 }
 
 func (r Juniper) CreateRoutingOptsConfig(in model.Target) error {
+	if in.ASN == 0 {
+		return nil
+	}
+
 	as := r.root.Configuration.GetOrCreateRoutingOptions().GetOrCreateAutonomousSystem()
 	ASN := strconv.FormatInt(in.ASN, 10)
 	as.AsNumber = &ASN

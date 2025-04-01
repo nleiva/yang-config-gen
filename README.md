@@ -1,27 +1,60 @@
 # Generating and reading YANG
 
+## Juniper
+
+### Generate to router
+
 ```bash
-⇨  make test
-go test ./... -v
-?       github.com/nleiva/yang-config-gen/model [no test files]
-=== RUN   TestCreateIntConfigText
-=== RUN   TestCreateIntConfigText/config-lo0.0
-=== PAUSE TestCreateIntConfigText/config-lo0.0
-=== RUN   TestCreateIntConfigText/config-lo0
-=== PAUSE TestCreateIntConfigText/config-lo0
-=== CONT  TestCreateIntConfigText/config-lo0.0
-=== CONT  TestCreateIntConfigText/config-lo0
---- PASS: TestCreateIntConfigText (0.00s)
-    --- PASS: TestCreateIntConfigText/config-lo0.0 (0.08s)
-    --- PASS: TestCreateIntConfigText/config-lo0 (0.08s)
-=== RUN   TestReadJSONFromRouter
-=== RUN   TestReadJSONFromRouter/config-lo0
---- PASS: TestReadJSONFromRouter (0.00s)
-    --- PASS: TestReadJSONFromRouter/config-lo0 (0.00s)
-PASS
+cmd ⇨  go run main.go ../model/testdata/interface.json 
+{
+  "configuration": {
+    "interfaces": {
+      "interface": [
+        {
+          "description": "description",
+          "encapsulation": "vlan-ccc",
+          "link-mode": "full-duplex",
+          "mtu": 1500,
+          "name": "eth-0/1/1",
+          "native-vlan-id": 22,
+          "speed": "100g"
+        },
+        {
+          "name": "ge-2/2/0",
+          "unit": [
+            {
+              "family": {
+                "inet": {
+                  "address": [
+                    {
+                      "name": "10.10.10.1/24"
+                    }
+                  ]
+                }
+              },
+              "name": "10"
+            }
+          ]
+        }
+      ]
+    },
+    "routing-instances": {
+      "instance": [
+        {
+          "interface": [
+            {
+              "name": "ge-2/2/0.10"
+            }
+          ],
+          "name": "red"
+        }
+      ]
+    }
+  }
+}
 ```
 
-## Juniper
+### From router
 
 I removed YANG annotations from the device output to give to `ygot` Unmarshal method. I also made the unit name a string instead of a number.
 1. it doesnt't like "@" : {}

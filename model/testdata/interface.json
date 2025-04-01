@@ -1,0 +1,88 @@
+{
+    "interfaces": {
+        "interface": {
+            "eth-0/1/1": {
+                "name": "eth-0/1/1",
+                "config": {
+                    "name": "eth-0/1/1",
+                    "enabled": false,
+                    "description": "description",
+                    "mtu": 1500,
+                    "mode": "access",
+                    "type": "ethernet",
+                    "bandwidth": 1000
+                },
+                "ethernet": {
+                    "config": {
+                        "duplex-mode": "FULL",
+                        "port-speed": 100000,
+                        "auto-negotiate": true,
+                        "aggregate-id": 1,
+                        "encapsulation": "dot1q"
+                    },
+                    "switched-vlan": {
+                        "config": {
+                            "interface-mode": "TRUNK",
+                            "native-vlan": 22,
+                            "trunk-vlans": [
+                                10,
+                                20,
+                                40
+                            ]
+                        }
+                    }
+                }
+            },
+            "ge-2/2/0": {
+                "name": "ge-2/2/0",
+                "config": {
+                    "name": "ge-2/2/0"
+                },
+                "subinterfaces": {
+                    "subinterface": {
+                        "10": {
+                            "config": {
+                                "index": 10
+                            },
+                            "index": 10,
+                            "ipv4": {
+                                "addresses": {
+                                    "address": {
+                                        "10.10.10.1": {
+                                            "ip": "10.10.10.1",
+                                            "config": {
+                                                "ip": "10.10.10.1",
+                                                "prefix-length": 24
+                                            }
+                                        }
+                                    }
+                                },
+                                "config": {
+                                    "enabled": true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "network-instances": {
+        "network-instance": {
+            "red": {
+                "interfaces": {
+                    "interface": {
+                        "ge-2/2/0.10": {
+                            "config": {
+                                "id": "ge-2/2/0.10",
+                                "interface": "ge-2/2/0",
+                                "subinterface": 10
+                            },
+                            "id": "ge-2/2/0.10"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

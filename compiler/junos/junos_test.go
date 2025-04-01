@@ -4,36 +4,51 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nleiva/yang-data-structures/junos"
 	"github.com/nleiva/yang-config-gen/model"
+	"github.com/nleiva/yang-data-structures/junos"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateIntConfigText(t *testing.T) {
 	tt := []struct {
-		name   string
-		config model.Target
+		name     string
+		config   model.Target
 		expected string
-		err    string
+		err      string
 	}{
 		{
-			name:   "config-lo0.0",
+			name: "config-lo0.0",
 			config: model.Target{
-				Interfaces: []model.Interface{{
-					Name:        "lo0",
-					Unit:        "0",
-					Description: "Test-Description",
-				}},
+				Interfaces: model.Interfaces{
+					Interface: map[string]model.Interface{
+						"lo0": {
+							Subinterfaces: model.SubInterfaces{
+								SubInterface: map[string]model.SubInterface{
+									"0": {
+										Config: model.SubInterfaceConfig{
+											Description: "Test-Description",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 			},
-			expected: ygotLo00, 
+			expected: ygotLo00,
 		},
 		{
-			name:   "config-lo0",
+			name: "config-lo0",
 			config: model.Target{
-				Interfaces: []model.Interface{{
-					Name:        "lo0",
-					Description: "Test-Description",
-				}},
+				Interfaces: model.Interfaces{
+					Interface: map[string]model.Interface{
+						"lo0": {
+							Config: model.InterfaceConfig{
+								Description: "Test-Description",
+							},
+						},
+					},
+				},
 			},
 			expected: ygotLo0,
 		},
@@ -46,6 +61,58 @@ func TestCreateIntConfigText(t *testing.T) {
 			err := j.CreateIntConfig(tc.config)
 			if err != nil {
 				t.Errorf("can't create interface config: %s", err.Error())
+			}
+
+			jsonConfig, err := j.EmitConfig()
+			if err != nil {
+				t.Errorf("can't emit config: %s", err.Error())
+			}
+
+			switch tc.err {
+			case "":
+				{
+					expected := cleanString(tc.expected)
+					result := cleanString(jsonConfig)
+					assert.Equal(t, expected, result)
+				}
+			default:
+				assert.ErrorContains(t, err, tc.err)
+			}
+
+		})
+	}
+}
+
+func TestNetworkInstance(t *testing.T) {
+	tt := []struct {
+		name     string
+		config   model.Target
+		expected string
+		err      string
+	}{
+		{
+			name: "config-lo0.0",
+			config: model.Target{
+				NetworkInstances: model.NetworkInstances{},
+			},
+			expected: "{}",
+		},
+		{
+			name: "config-lo0",
+			config: model.Target{
+				NetworkInstances: model.NetworkInstances{},
+			},
+			expected: "{}",
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			j := NewCompiler()
+			err := j.CreateRoutingInstancesConfig(tc.config)
+			if err != nil {
+				t.Errorf("can't create routing instance config: %s", err.Error())
 			}
 
 			jsonConfig, err := j.EmitConfig()
