@@ -114,10 +114,11 @@ type ActionsConfig struct {
 }
 
 type Conditions struct {
-	BGPConditions BGPConditionsConfig `json:"bgp-conditions"`
+	BGPConditions BGPConditions    `json:"bgp-conditions"`
+	Config        ConditionsConfig `json:"config"`
 }
 
-type BGPConditionsConfig struct {
+type BGPConditions struct {
 	Config ConditionsConfig `json:"config"`
 }
 
@@ -147,7 +148,8 @@ type Reference struct {
 }
 
 type ReferenceConfig struct {
-	CommunitySetRef string `json:"community-set-ref"`
+	CommunitySetRef    string `json:"community-set-ref"`
+	ExtCommunitySetRef string `json:"ext-community-set-ref"`
 }
 
 type SetCommunityConfig struct {

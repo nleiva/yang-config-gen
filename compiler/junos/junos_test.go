@@ -202,11 +202,14 @@ const ygotLo00 = `{
   }
 }`
 
-// OUTPUT from device. Removed YANG annotations and I made the unit name a string instead of a number.
-// 1. it doesnt't like "@" : {}
-// 2. got float64 type for field name, expect string
+// OUTPUT from device. I made the unit name a string instead of a number.
+// 1. got float64 type for field name, expect string
 const routerLo0 = `{
     "configuration" : {
+        "@" : {
+            "junos:changed-seconds" : "1743092661", 
+            "junos:changed-localtime" : "2025-03-27 16:24:21 UTC"
+        }, 
         "interfaces" : {
             "interface" : [
             {

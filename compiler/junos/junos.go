@@ -57,6 +57,22 @@ func (r Juniper) CompileConfig(in model.Target) error {
 		}
 	}
 
+	if in.RoutingPolicy != nil {
+		err := r.CreateRoutingPolicyConfig(in)
+		if err != nil {
+			return fmt.Errorf("can't compile routing-policy config: %w", err)
+		}
+		err = r.CreatePrefixListConfig(in)
+		if err != nil {
+			return fmt.Errorf("can't compile prefix-list config: %w", err)
+		}
+		err = r.CreateCommunitiesConfig(in)
+		if err != nil {
+			return fmt.Errorf("can't compile communities config: %w", err)
+		}
+
+	}
+
 	return nil
 }
 
@@ -257,6 +273,110 @@ func (r Juniper) CreateRoutingOptsConfig(in model.Target) error {
 	err := ri.Validate()
 	if err != nil {
 		return fmt.Errorf("invalid routing options config: %w", err)
+	}
+	return nil
+}
+
+func (r Juniper) CreateRoutingPolicyConfig(in model.Target) error {
+	rp := r.root.Configuration.GetOrCreatePolicyOptions()
+
+	if len(in.RoutingPolicy.PolicyDefinitions.PolicyDefinition) > 0 {
+		for name, definition := range in.RoutingPolicy.PolicyDefinitions.PolicyDefinition {
+			policy := rp.GetOrCreatePolicyStatement(name)
+
+			for term, statement := range definition.Statements.Statement {
+				t := policy.GetOrCreateTerm(term)
+				if statement.Config.Seq != 0 {
+					// Does JunOS ignore the sequence number?
+				}
+				if len(statement.Conditions.Config.CallPolicies) > 0 {
+					from := t.GetOrCreateFrom()
+					from.Policy = statement.Conditions.Config.CallPolicies
+				}
+				if statement.Conditions.Config.CommunitySet != "" {
+					from := t.GetOrCreateFrom()
+					from.Community = append(from.Community, statement.Conditions.Config.CommunitySet)
+				}
+				if statement.Conditions.BGPConditions.Config.CommunitySet != "" {
+					from := t.GetOrCreateFrom()
+					from.Community = append(from.Community, statement.Conditions.BGPConditions.Config.CommunitySet)
+				}
+				if statement.Conditions.BGPConditions.Config.ExtCommunitySet != "" {
+					from := t.GetOrCreateFrom()
+					from.Community = append(from.Community, statement.Conditions.BGPConditions.Config.ExtCommunitySet)
+				}
+				// From route-filter? -> rfc1918?
+
+				then := t.GetOrCreateThen()
+				switch statement.Actions.Config.PolicyResult {
+				case "ACCEPT_ROUTE":
+					then.Accept = true
+				case "NEXT_ENTRY":
+					then.Next = junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_Term_Then_Next_policy
+				case "REJECT_ROUTE":
+					then.Reject = true
+				}
+
+				if statement.Actions.BGPActions.Config.SetMed != 0 {
+					then.GetOrCreateMetric().Metric = junos.UnionUint32(statement.Actions.BGPActions.Config.SetMed)
+				}
+				// Check this in the model
+				//
+				// if statement.Actions.BGPActions.SetExtCommunity.Reference.Config.ExtCommunitySetRef != "" {
+				// 	then.GetOrCreateCommunity(
+				// 		junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_Term_Then_Community_ChoiceIdent_add,
+				// 		"add",
+				// 		statement.Actions.BGPActions.SetExtCommunity.Reference.Config.ExtCommunitySetRef)
+				// }
+
+			}
+
+		}
+	}
+
+	err := rp.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid policy definition inputs: %w", err)
+	}
+	return nil
+}
+
+func (r Juniper) CreatePrefixListConfig(in model.Target) error {
+	rp := r.root.Configuration.GetOrCreatePolicyOptions()
+
+	if len(in.RoutingPolicy.DefinedSets.PrefixSets.PrefixSet) > 0 {
+		for name, prefixset := range in.RoutingPolicy.DefinedSets.PrefixSets.PrefixSet {
+			policy := rp.GetOrCreatePolicyStatement(name)
+
+			for _, statement := range prefixset.Prefixes.Prefix {
+				t := policy.GetOrCreateTerm("accept")
+				from := t.GetOrCreateFrom()
+				orlonger := junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_From_RouteFilter_ChoiceIdent_orlonger
+				from.GetOrCreateRouteFilter(statement.IPPrefix, orlonger, "")
+			}
+
+			policy.GetOrCreateThen().Accept = true
+		}
+	}
+	err := rp.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid prefix set inputs: %w", err)
+	}
+	return nil
+}
+
+func (r Juniper) CreateCommunitiesConfig(in model.Target) error {
+	rp := r.root.Configuration.GetOrCreatePolicyOptions()
+
+	if len(in.RoutingPolicy.DefinedSets.BGPDefinedSets.CommunitySets.CommunitySet) > 0 {
+		for name, commset := range in.RoutingPolicy.DefinedSets.BGPDefinedSets.CommunitySets.CommunitySet {
+			c := rp.GetOrCreateCommunity(name)
+			c.Members = append(c.Members, commset.Config.CommunityMember...)
+		}
+	}
+	err := rp.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid prefix set inputs: %w", err)
 	}
 	return nil
 }

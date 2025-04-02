@@ -100,6 +100,66 @@ $ go run main.go ../model/testdata/bgp.json
 }
 ```
 
+#### Policy options
+
+```bash
+$ go run main.go ../model/testdata/routingpolicy.json 
+{
+  "configuration": {
+    "policy-options": {
+      "community": [
+        {
+          "members": [
+            "64496:509"
+          ],
+          "name": "r2d2"
+        },
+        {
+          "members": [
+            "64496:529"
+          ],
+          "name": "r2d2-b"
+        },
+        {
+          "members": [
+            "origin:100.0.0.0:1"
+          ],
+          "name": "wedge"
+        },
+        {
+          "members": [
+            "64496:519"
+          ],
+          "name": "yoda"
+        },
+        {
+          "members": [
+            "64496:539"
+          ],
+          "name": "yoda-b"
+        }
+      ],
+      "policy-statement": [
+        {
+          "name": "amidala",
+          "term": [
+            {
+              "from": {
+                "route-filter": [
+                  {
+                    "address": "172.2.0.0/16",
+                    "choice-ident": "orlonger",
+                    "choice-value": ""
+                  }
+                ]
+              },
+              "name": "accept"
+            }
+          ],
+          ....
+```
+
+
 ## Parse JSON config from router
 
 I removed YANG annotations from the device output to give to `ygot` Unmarshal method. I also made the unit name a string instead of a number.

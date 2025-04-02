@@ -11,5 +11,5 @@ type Target struct {
 	ID               int32
 	Interfaces       Interfaces       `json:"interfaces"`
 	NetworkInstances NetworkInstances `json:"network-instances"`
-	RoutingPolicy    RoutingPolicy    `json:"routing-policy"`
+	RoutingPolicy    *RoutingPolicy   `json:"routing-policy"`
 }

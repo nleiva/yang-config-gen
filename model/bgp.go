@@ -20,17 +20,15 @@ type GlobalConfig struct {
 }
 
 type GracefulRestart struct {
-	Config GracefulRestartConfig `json:"config"`
-}
-
-type GracefulRestartConfig struct {
-	Enabled bool `json:"enabled"`
+	Config EnableConfig `json:"config"`
 }
 
 type PolicyDefault struct {
-	Ebgp struct {
-		Config DefaultBGPPolicyConfig `json:"config"`
-	} `json:"ebgp"`
+	EBGP EBGPPolicyDefault `json:"ebgp"`
+}
+
+type EBGPPolicyDefault struct {
+	Config DefaultBGPPolicyConfig `json:"config"`
 }
 
 type DefaultBGPPolicyConfig struct {
@@ -39,15 +37,13 @@ type DefaultBGPPolicyConfig struct {
 }
 
 type UseMultiplePaths struct {
-	Config struct {
-		Enabled bool `json:"enabled"`
-	} `json:"config"`
-	Ebgp struct {
-		Config MultiplePathsConfig `json:"config"`
-	} `json:"ebgp"`
-	Ibgp struct {
-		Config MultiplePathsConfig `json:"config"`
-	} `json:"ibgp"`
+	Config EnableConfig        `json:"config"`
+	EBGP   UseMultiplePathsBGP `json:"ebgp"`
+	IBGP   UseMultiplePathsBGP `json:"ibgp"`
+}
+
+type UseMultiplePathsBGP struct {
+	Config MultiplePathsConfig `json:"config"`
 }
 
 type MultiplePathsConfig struct {
@@ -60,22 +56,30 @@ type PeerGroups struct {
 }
 
 type PeerGroup struct {
-	AfiSafis    AfiSafis `json:"afi-safis"`
-	ApplyPolicy struct {
-		Config BGPPolicyConfig `json:"config"`
-	} `json:"apply-policy"`
-	ASPathOptions struct {
-		Config ASPathOptionsConfig `json:"config"`
-	} `json:"as-path-options"`
-	Config        PeerGroupConfig `json:"config"`
-	PeerGroupName string          `json:"peer-group-name"`
-	Timers        struct {
-		Config TimersConfig `json:"config"`
-	} `json:"timers"`
-	Transport struct {
-		Config TransportConfig `json:"config"`
-	} `json:"transport"`
+	AfiSafis         AfiSafis         `json:"afi-safis"`
+	ApplyPolicy      ApplyPolicy      `json:"apply-policy"`
+	ASPathOptions    ASPathOptions    `json:"as-path-options"`
+	Config           PeerGroupConfig  `json:"config"`
+	PeerGroupName    string           `json:"peer-group-name"`
+	Timers           Timers           `json:"timers"`
+	Transport        Transport        `json:"transport"`
 	UseMultiplePaths UseMultiplePaths `json:"use-multiple-paths"`
+}
+
+type ApplyPolicy struct {
+	Config BGPPolicyConfig `json:"config"`
+}
+
+type ASPathOptions struct {
+	Config ASPathOptionsConfig `json:"config"`
+}
+
+type Timers struct {
+	Config TimersConfig `json:"config"`
+}
+
+type Transport struct {
+	Config TransportConfig `json:"config"`
 }
 
 type BGPPolicyConfig struct {
@@ -125,9 +129,11 @@ type AfiSafiConfig struct {
 }
 
 type IPv4Unicast struct {
-	PrefixLimit struct {
-		Config PrefixLimitConfig `json:"config"`
-	} `json:"prefix-limit"`
+	PrefixLimit IPv4UnicastPrefixLimit `json:"prefix-limit"`
+}
+
+type IPv4UnicastPrefixLimit struct {
+	Config PrefixLimitConfig `json:"config"`
 }
 
 type PrefixLimitConfig struct {
@@ -143,12 +149,14 @@ type Neighbors struct {
 type Neighbor struct {
 	NeighborAddress string         `json:"neighbor-address"`
 	Config          NeighborConfig `json:"config"`
-	EnableBFD       struct {
-		Config EnableBFDConfig `json:"config"`
-	} `json:"enable-bfd"`
+	EnableBFD       EnableBFD      `json:"enable-bfd"`
 }
 
-type EnableBFDConfig struct {
+type EnableBFD struct {
+	Config EnableConfig `json:"config"`
+}
+
+type EnableConfig struct {
 	Enabled bool `json:"enabled"`
 }
 
