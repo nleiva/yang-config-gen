@@ -214,8 +214,8 @@ root@JunOS# show interfaces lo0 | display json
 Then unmarshal it like this:
 
 ```go
-			load := &junos.Junos{}
-			if err := junos.Unmarshal([]byte(routerLo0), load); err != nil {
-				t.Errorf("Can't unmarshal JSON: %v", err)
-			}
+      load := &junos.Junos{}
+      if err := junos.Unmarshal([]byte(routerLo0), load); err != nil {
+        t.Errorf("Can't unmarshal JSON: %v", err)
+      }
 ```
