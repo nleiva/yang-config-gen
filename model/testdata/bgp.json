@@ -1,7 +1,7 @@
 {
     "network-instances": {
         "network-instance": {
-            "ofce": {
+            "office": {
                 "protocols": {
                     "protocol": {
                         "BGP": {

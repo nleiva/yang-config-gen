@@ -1,7 +1,6 @@
 package main
 
 import (
-	"cmp"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,39 +10,32 @@ import (
 	"github.com/nleiva/yang-config-gen/model"
 )
 
-func check(s string, err error) {
-	if err != nil {
-		err = fmt.Errorf("%s: %w", s, err)
-		panic(err)
-	}
-}
-
-func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("add a JSON input file to the command")
-		os.Exit(1)
-	}
-
-	file := cmp.Or(os.Args[1], "../model/testdata/interface.json")
-
+func run(file string) (string, error) {
 	f, err := os.Open(file)
-	check("can't open file "+file, err)
+	if err != nil {
+		return "", fmt.Errorf("can't open file "+file, err)
+	}
 
 	defer f.Close()
 
 	target := new(model.Target)
 
 	err = ReadData(f, target)
-	check("can't unmarshal data from "+file, err)
+	if err != nil {
+		return "", fmt.Errorf("can't unmarshal data from "+file, err)
+	}
 
 	j := junos.NewCompiler()
 	err = j.CompileConfig(*target)
-	check("can't compile config from "+file, err)
+	if err != nil {
+		return "", fmt.Errorf("can't compile config from "+file, err)
+	}
 
 	output, err := j.EmitConfig()
-	check("can't create json config from "+file, err)
-
-	fmt.Printf("%v\n", output)
+	if err != nil {
+		return "", fmt.Errorf("can't create json config from "+file, err)
+	}
+	return output, nil
 
 }
 
@@ -55,4 +47,19 @@ func ReadData(r io.Reader, object any) error {
 		return fmt.Errorf("can't decode object: %w", err)
 	}
 	return nil
+}
+
+func main() {
+	if len(os.Args) < 2 {
+		fmt.Printf("add a JSON input file to the command")
+		os.Exit(1)
+	}
+
+	if result, err := run(os.Args[1]); err != nil {
+		fmt.Printf("error generating the config: %s\n", err)
+		os.Exit(1)
+	} else {
+		fmt.Printf("%v\n", result)
+	}
+
 }

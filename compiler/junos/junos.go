@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/netip"
 	"strconv"
+	"strings"
 
 	"github.com/nleiva/yang-config-gen/model"
 	"github.com/nleiva/yang-data-structures/junos"
@@ -71,6 +72,13 @@ func (r Juniper) CompileConfig(in model.Target) error {
 			return fmt.Errorf("can't compile communities config: %w", err)
 		}
 
+	}
+
+	if in.ACL != nil {
+		err := r.CreateACLConfig(in)
+		if err != nil {
+			return fmt.Errorf("can't compile ACL config: %w", err)
+		}
 	}
 
 	return nil
@@ -231,7 +239,13 @@ func (r Juniper) CreateBGPConfig(in model.Target) error {
 			bgp := instance.GetOrCreateProtocols().GetOrCreateBgp()
 
 			group := bgp.GetOrCreateGroup(bgpNeighbor.Config.PeerGroup)
-			group.GetOrCreateNeighbor(bgpNeighbor.Config.NeighborAddress)
+			neighbor := group.GetOrCreateNeighbor(bgpNeighbor.Config.NeighborAddress)
+			peerASN := strconv.Itoa(bgpNeighbor.Config.PeerAs)
+			neighbor.PeerAs = &peerASN
+			description := bgpNeighbor.Config.Description
+			if description != "" {
+				neighbor.Description = &description
+			}
 		}
 
 	}
@@ -244,28 +258,29 @@ func (r Juniper) CreateBGPConfig(in model.Target) error {
 }
 
 func (r Juniper) CreateRoutingOptsConfig(in model.Target) error {
+	if len(in.NetworkInstances.NetworkInstance) < 1 {
+		return nil
+	}
 	ri := r.root.Configuration.GetOrCreateRoutingInstances()
 
-	if len(in.NetworkInstances.NetworkInstance) > 0 {
-		for name, netInst := range in.NetworkInstances.NetworkInstance {
-			instance := ri.GetOrCreateInstance(name)
+	for name, netInst := range in.NetworkInstances.NetworkInstance {
+		instance := ri.GetOrCreateInstance(name)
 
-			protocol, ok := netInst.Protocols.Protocol["BGP"]
-			if !ok {
-				continue
-			}
+		protocol, ok := netInst.Protocols.Protocol["BGP"]
+		if !ok {
+			continue
+		}
 
-			ASN := protocol.BGP.Global.Config.As
+		ASN := protocol.BGP.Global.Config.As
 
-			if ASN != 0 {
-				a := strconv.Itoa(protocol.BGP.Global.Config.As)
-				instance.GetOrCreateRoutingOptions().GetOrCreateAutonomousSystem().AsNumber = &a
-			}
+		if ASN != 0 {
+			a := strconv.Itoa(protocol.BGP.Global.Config.As)
+			instance.GetOrCreateRoutingOptions().GetOrCreateAutonomousSystem().AsNumber = &a
+		}
 
-			if len(netInst.Interfaces.Interface) > 0 {
-				for iname, _ := range netInst.Interfaces.Interface {
-					_ = instance.GetOrCreateInterface(iname)
-				}
+		if len(netInst.Interfaces.Interface) > 0 {
+			for iname, _ := range netInst.Interfaces.Interface {
+				_ = instance.GetOrCreateInterface(iname)
 			}
 		}
 	}
@@ -278,60 +293,66 @@ func (r Juniper) CreateRoutingOptsConfig(in model.Target) error {
 }
 
 func (r Juniper) CreateRoutingPolicyConfig(in model.Target) error {
+	if in.RoutingPolicy == nil {
+		return nil
+	}
+
+	if len(in.RoutingPolicy.PolicyDefinitions.PolicyDefinition) < 1 {
+		return nil
+	}
+
 	rp := r.root.Configuration.GetOrCreatePolicyOptions()
 
-	if len(in.RoutingPolicy.PolicyDefinitions.PolicyDefinition) > 0 {
-		for name, definition := range in.RoutingPolicy.PolicyDefinitions.PolicyDefinition {
-			policy := rp.GetOrCreatePolicyStatement(name)
+	for name, definition := range in.RoutingPolicy.PolicyDefinitions.PolicyDefinition {
+		policy := rp.GetOrCreatePolicyStatement(name)
 
-			for term, statement := range definition.Statements.Statement {
-				t := policy.GetOrCreateTerm(term)
-				if statement.Config.Seq != 0 {
-					// Does JunOS ignore the sequence number?
-				}
-				if len(statement.Conditions.Config.CallPolicies) > 0 {
-					from := t.GetOrCreateFrom()
-					from.Policy = statement.Conditions.Config.CallPolicies
-				}
-				if statement.Conditions.Config.CommunitySet != "" {
-					from := t.GetOrCreateFrom()
-					from.Community = append(from.Community, statement.Conditions.Config.CommunitySet)
-				}
-				if statement.Conditions.BGPConditions.Config.CommunitySet != "" {
-					from := t.GetOrCreateFrom()
-					from.Community = append(from.Community, statement.Conditions.BGPConditions.Config.CommunitySet)
-				}
-				if statement.Conditions.BGPConditions.Config.ExtCommunitySet != "" {
-					from := t.GetOrCreateFrom()
-					from.Community = append(from.Community, statement.Conditions.BGPConditions.Config.ExtCommunitySet)
-				}
-				// From route-filter? -> rfc1918?
+		for term, statement := range definition.Statements.Statement {
+			t := policy.GetOrCreateTerm(term)
+			if statement.Config.Seq != 0 {
+				// Does JunOS ignore the sequence number?
+			}
+			if len(statement.Conditions.Config.CallPolicies) > 0 {
+				from := t.GetOrCreateFrom()
+				from.Policy = statement.Conditions.Config.CallPolicies
+			}
+			if statement.Conditions.Config.CommunitySet != "" {
+				from := t.GetOrCreateFrom()
+				from.Community = append(from.Community, statement.Conditions.Config.CommunitySet)
+			}
+			if statement.Conditions.BGPConditions.Config.CommunitySet != "" {
+				from := t.GetOrCreateFrom()
+				from.Community = append(from.Community, statement.Conditions.BGPConditions.Config.CommunitySet)
+			}
+			if statement.Conditions.BGPConditions.Config.ExtCommunitySet != "" {
+				from := t.GetOrCreateFrom()
+				from.Community = append(from.Community, statement.Conditions.BGPConditions.Config.ExtCommunitySet)
+			}
+			// From route-filter? -> rfc1918?
 
-				then := t.GetOrCreateThen()
-				switch statement.Actions.Config.PolicyResult {
-				case "ACCEPT_ROUTE":
-					then.Accept = true
-				case "NEXT_ENTRY":
-					then.Next = junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_Term_Then_Next_policy
-				case "REJECT_ROUTE":
-					then.Reject = true
-				}
-
-				if statement.Actions.BGPActions.Config.SetMed != 0 {
-					then.GetOrCreateMetric().Metric = junos.UnionUint32(statement.Actions.BGPActions.Config.SetMed)
-				}
-				// Check this in the model
-				//
-				// if statement.Actions.BGPActions.SetExtCommunity.Reference.Config.ExtCommunitySetRef != "" {
-				// 	then.GetOrCreateCommunity(
-				// 		junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_Term_Then_Community_ChoiceIdent_add,
-				// 		"add",
-				// 		statement.Actions.BGPActions.SetExtCommunity.Reference.Config.ExtCommunitySetRef)
-				// }
-
+			then := t.GetOrCreateThen()
+			switch statement.Actions.Config.PolicyResult {
+			case "ACCEPT_ROUTE":
+				then.Accept = true
+			case "NEXT_ENTRY":
+				then.Next = junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_Term_Then_Next_policy
+			case "REJECT_ROUTE":
+				then.Reject = true
 			}
 
+			if statement.Actions.BGPActions.Config.SetMed != 0 {
+				then.GetOrCreateMetric().Metric = junos.UnionUint32(statement.Actions.BGPActions.Config.SetMed)
+			}
+			// Check this in the model
+			//
+			// if statement.Actions.BGPActions.SetExtCommunity.Reference.Config.ExtCommunitySetRef != "" {
+			// 	then.GetOrCreateCommunity(
+			// 		junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_Term_Then_Community_ChoiceIdent_add,
+			// 		"add",
+			// 		statement.Actions.BGPActions.SetExtCommunity.Reference.Config.ExtCommunitySetRef)
+			// }
+
 		}
+
 	}
 
 	err := rp.Validate()
@@ -342,22 +363,29 @@ func (r Juniper) CreateRoutingPolicyConfig(in model.Target) error {
 }
 
 func (r Juniper) CreatePrefixListConfig(in model.Target) error {
+	if in.RoutingPolicy == nil {
+		return nil
+	}
+
+	if len(in.RoutingPolicy.DefinedSets.PrefixSets.PrefixSet) < 1 {
+		return nil
+	}
+
 	rp := r.root.Configuration.GetOrCreatePolicyOptions()
 
-	if len(in.RoutingPolicy.DefinedSets.PrefixSets.PrefixSet) > 0 {
-		for name, prefixset := range in.RoutingPolicy.DefinedSets.PrefixSets.PrefixSet {
-			policy := rp.GetOrCreatePolicyStatement(name)
+	for name, prefixset := range in.RoutingPolicy.DefinedSets.PrefixSets.PrefixSet {
+		policy := rp.GetOrCreatePolicyStatement(name)
 
-			for _, statement := range prefixset.Prefixes.Prefix {
-				t := policy.GetOrCreateTerm("accept")
-				from := t.GetOrCreateFrom()
-				orlonger := junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_From_RouteFilter_ChoiceIdent_orlonger
-				from.GetOrCreateRouteFilter(statement.IPPrefix, orlonger, "")
-			}
-
-			policy.GetOrCreateThen().Accept = true
+		for _, statement := range prefixset.Prefixes.Prefix {
+			t := policy.GetOrCreateTerm("accept")
+			from := t.GetOrCreateFrom()
+			orlonger := junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_From_RouteFilter_ChoiceIdent_orlonger
+			from.GetOrCreateRouteFilter(statement.IPPrefix, orlonger, "")
 		}
+
+		policy.GetOrCreateThen().Accept = true
 	}
+
 	err := rp.Validate()
 	if err != nil {
 		return fmt.Errorf("invalid prefix set inputs: %w", err)
@@ -366,15 +394,189 @@ func (r Juniper) CreatePrefixListConfig(in model.Target) error {
 }
 
 func (r Juniper) CreateCommunitiesConfig(in model.Target) error {
+	if in.RoutingPolicy == nil {
+		return nil
+	}
+
+	if len(in.RoutingPolicy.DefinedSets.BGPDefinedSets.CommunitySets.CommunitySet) < 1 {
+		return nil
+	}
+
 	rp := r.root.Configuration.GetOrCreatePolicyOptions()
 
-	if len(in.RoutingPolicy.DefinedSets.BGPDefinedSets.CommunitySets.CommunitySet) > 0 {
-		for name, commset := range in.RoutingPolicy.DefinedSets.BGPDefinedSets.CommunitySets.CommunitySet {
-			c := rp.GetOrCreateCommunity(name)
-			c.Members = append(c.Members, commset.Config.CommunityMember...)
+	for name, commset := range in.RoutingPolicy.DefinedSets.BGPDefinedSets.CommunitySets.CommunitySet {
+		c := rp.GetOrCreateCommunity(name)
+		c.Members = append(c.Members, commset.Config.CommunityMember...)
+	}
+
+	err := rp.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid prefix set inputs: %w", err)
+	}
+	return nil
+}
+
+func (r Juniper) CreateACLConfig(in model.Target) error {
+	if in.ACL == nil {
+		return nil
+	}
+
+	if len(in.ACL.ACLSets.ACLSet) < 1 {
+		return nil
+	}
+	fw := r.root.Configuration.GetOrCreateFirewall()
+
+	for name, aclset := range in.ACL.ACLSets.ACLSet {
+
+		if len(aclset.ACLEntries.ACLEntry) < 1 {
+			continue
+		}
+		names := strings.Split(name, "-")
+		postype := names[0]
+
+		filter := fw.GetOrCreateFilter(name)
+		for _, acl := range aclset.ACLEntries.ACLEntry {
+			term := postype + "-" + acl.Config.Description
+			t := filter.GetOrCreateTerm(term)
+			from := t.GetOrCreateFrom()
+			then := t.GetOrCreateThen()
+
+			for _, addr := range acl.IPv4.Config.SourceAddresses {
+				from.GetOrCreateSourceAddress(addr)
+			}
+			for _, addr := range acl.IPv4.Config.DestinationAddresses {
+				from.GetOrCreateDestinationAddress(addr)
+			}
+
+			if acl.Transport.Config.DestinationPort != "" {
+				ports := strings.Split(acl.Transport.Config.DestinationPort, "..")
+				switch len(ports) > 1 {
+				case true:
+					from.DestinationPort = []string{ports[0] + "-" + ports[1]}
+				default:
+					from.DestinationPort = []string{acl.Transport.Config.DestinationPort}
+				}
+			}
+
+			if acl.IPv4.Config.Protocol != "" {
+				switch acl.IPv4.Config.Protocol {
+				case "IP_UDP":
+					from.Protocol = []string{"udp"}
+				case "IP_TCP":
+					from.Protocol = []string{"tcp"}
+				case "IP_ICMP":
+					icmmpMap := map[string]string{
+						"ECHO_REPLY":      "echo-reply",
+						"DST_UNREACHABLE": "unreachable",
+						"ECHO":            "echo-request",
+						"TIME_EXCEEDED":   "time-exceeded",
+					}
+					from.Protocol = []string{"icmp"}
+					for _, msg := range acl.IPv4.ICMPv4.Config.Types {
+						from.IcmpType = append(from.IcmpType, icmmpMap[msg])
+					}
+				}
+			}
+
+			switch acl.Actions.Config.ForwardingAction {
+			case "ACCEPT":
+				then.Accept = true
+			case "DROP":
+				then.GetOrCreateDiscard()
+			}
+
+			then.Count = &term
+
+			switch acl.Actions.Config.TargetGroup {
+			// match-dscp forwarding-class ef loss-priority low code-points ef
+			case "ef":
+				fc := "ef"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+			// match-dscp forwarding-class be loss-priority high code-points be
+			case "be":
+				fc := "be"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
+			// match-dscp forwarding-class q1 loss-priority low code-points cs2
+			case "cs2":
+				fc := "q1"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+			// match-dscp forwarding-class q1 loss-priority high code-points cs1
+			// match-dscp forwarding-class q1 loss-priority high code-points af11
+			case "af11", "cs1":
+				fc := "q1"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
+			// match-dscp forwarding-class q3 loss-priority high code-points cs3
+			// match-dscp forwarding-class q3 loss-priority high code-points af31
+			case "cs3", "af31":
+				fc := "q3"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
+			// match-dscp forwarding-class q3 loss-priority low code-points cs5
+			case "cs5":
+				fc := "q3"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+			// match-dscp forwarding-class q4 loss-priority low code-points cs4
+			case "cs4":
+				fc := "q4"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+			// match-dscp forwarding-class q4 loss-priority high code-points af41
+			// match-dscp forwarding-class q4 loss-priority high code-points af42
+			case "af41", "af42":
+				fc := "q4"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
+			// match-dscp forwarding-class sc loss-priority low code-points cs6
+			case "cs6":
+				fc := "sc"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+			// match-dscp forwarding-class nc loss-priority low code-points cs7
+			case "cs7":
+				fc := "nc"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+			// match-dscp forwarding-class q2 loss-priority low code-points af21
+			case "af21":
+				fc := "q2"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+			// match-dscp forwarding-class q2 loss-priority high code-points af22
+			case "af22":
+				fc := "q2"
+				then.ForwardingClass = &fc
+				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
+			default:
+			}
+
+		}
+
+	}
+
+	for name, iface := range in.ACL.Interfaces.Interface {
+		names := strings.Split(name, ".")
+		var unit string
+		if len(names) > 1 {
+			unit = names[1]
+		}
+
+		intf := r.root.Configuration.GetOrCreateInterfaces().GetOrCreateInterface(names[0])
+
+		filter := intf.GetOrCreateUnit(unit).GetOrCreateFamily().GetOrCreateInet().GetOrCreateFilter()
+		for _, out := range iface.EgressACLSets.EgressACLSet {
+			filter.GetOrCreateOutput().FilterName = &out.SetName
+		}
+		for _, in := range iface.IngressACLSets.IngressACLSet {
+			filter.GetOrCreateInput().FilterName = &in.SetName
 		}
 	}
-	err := rp.Validate()
+
+	err := fw.Validate()
 	if err != nil {
 		return fmt.Errorf("invalid prefix set inputs: %w", err)
 	}

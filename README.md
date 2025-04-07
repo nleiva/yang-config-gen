@@ -1,5 +1,7 @@
 # Generating and reading YANG
 
+Compile the code with `make build` or download an executable from [releases](https://github.com/nleiva/yang-config-gen/releases).
+
 ## Generate to router
 
 ### Juniper
@@ -9,7 +11,7 @@ Translating OC'ish input to JunOS YANG.
 #### Interfaces
 
 ```bash
-$ go run main.go ../model/testdata/interface.json
+$ ./bin/confgen_mac model/testdata/interface.json
 {
   "configuration": {
     "interfaces": {
@@ -61,7 +63,7 @@ $ go run main.go ../model/testdata/interface.json
 #### BGP
 
 ```bash
-$ go run main.go ../model/testdata/bgp.json 
+$ ./bin/confgen_mac model/testdata/bgp.json 
 {
   "configuration": {
     "routing-instances": {
@@ -103,7 +105,7 @@ $ go run main.go ../model/testdata/bgp.json
 #### Policy options
 
 ```bash
-$ go run main.go ../model/testdata/routingpolicy.json 
+$ ./bin/confgen_mac model/testdata/routingpolicy.json 
 {
   "configuration": {
     "policy-options": {
@@ -162,9 +164,10 @@ $ go run main.go ../model/testdata/routingpolicy.json
 
 ## Parse JSON config from router
 
-I removed YANG annotations from the device output to give to `ygot` Unmarshal method. I also made the unit name a string instead of a number.
-1. it doesnt't like "@" : {}
-2. got float64 type for field name, expect string
+Save the following output to variable `routerLo0` like in the [junos_test.go](compiler/junos/junos_test.go).
+
+  I had to make the unit name a string instead of a number ("got float64 type for field name, expect string" error). 
+
 
 ```json
 root@JunOS# show interfaces lo0 | display json 
@@ -206,4 +209,13 @@ root@JunOS# show interfaces lo0 | display json
         }
     }
 }
+```
+
+Then unmarshal it like this:
+
+```go
+			load := &junos.Junos{}
+			if err := junos.Unmarshal([]byte(routerLo0), load); err != nil {
+				t.Errorf("Can't unmarshal JSON: %v", err)
+			}
 ```

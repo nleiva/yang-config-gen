@@ -22,7 +22,7 @@ func TestBGP(t *testing.T) {
 		{
 			name:      "BGP 1",
 			file:      "testdata/bgp.json",
-			netwInst:  "ofce",
+			netwInst:  "office",
 			length:    1,
 			protocol:  "BGP",
 			ASN:       65001,
@@ -33,7 +33,7 @@ func TestBGP(t *testing.T) {
 		{
 			name:      "BGP 2",
 			file:      "testdata/bgp.json",
-			netwInst:  "ofce",
+			netwInst:  "office",
 			length:    1,
 			protocol:  "BGP",
 			ASN:       65001,

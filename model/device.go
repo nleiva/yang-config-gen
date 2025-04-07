@@ -12,4 +12,5 @@ type Target struct {
 	Interfaces       Interfaces       `json:"interfaces"`
 	NetworkInstances NetworkInstances `json:"network-instances"`
 	RoutingPolicy    *RoutingPolicy   `json:"routing-policy"`
+	ACL              *ACL             `json:"acl"`
 }

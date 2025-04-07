@@ -135,6 +135,247 @@ func TestNetworkInstance(t *testing.T) {
 	}
 }
 
+func TestCreateBGPConfig(t *testing.T) {
+	tt := []struct {
+		name     string
+		config   model.Target
+		expected string
+		err      string
+	}{
+		{
+			name: "config-bgp-1",
+			config: model.Target{
+				NetworkInstances: model.NetworkInstances{
+					NetworkInstance: map[string]model.NetworkInstance{
+						"test": {
+							// Interfaces: model.NtwInstInterfaces{
+							// 	Interface: map[string]model.NtwInstInterface{},
+							// },
+							Protocols: model.NtwInstProtocols{
+								Protocol: map[string]model.NtwInstProtocol{
+									"BGP": {
+										BGP: model.BGP{
+											Global: model.Global{
+												Config: model.GlobalConfig{},
+											},
+											Neighbors: model.Neighbors{
+												Neighbor: map[string]model.Neighbor{
+													"10.99.99.1": {
+														NeighborAddress: "10.99.99.1",
+														Config: model.NeighborConfig{
+															NeighborAddress: "10.99.99.1",
+															PeerAs:          65002,
+															Enabled:         true,
+															PeerGroup:       "customers",
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expected: bgp1,
+		},
+		{
+			name: "config-bgp-2",
+			config: model.Target{
+				NetworkInstances: model.NetworkInstances{},
+			},
+			expected: "{}",
+		},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			j := NewCompiler()
+			err := j.CreateBGPConfig(tc.config)
+			if err != nil {
+				t.Errorf("can't create BGP config: %s", err.Error())
+			}
+
+			jsonConfig, err := j.EmitConfig()
+			if err != nil {
+				t.Errorf("can't emit config: %s", err.Error())
+			}
+
+			switch tc.err {
+			case "":
+				{
+					expected := cleanString(tc.expected)
+					result := cleanString(jsonConfig)
+					assert.Equal(t, expected, result)
+				}
+			default:
+				assert.ErrorContains(t, err, tc.err)
+			}
+
+		})
+	}
+}
+
+func TestCreatePolicyConfig(t *testing.T) {
+	tt := []struct {
+		name     string
+		config   model.Target
+		expected string
+		err      string
+	}{
+		{
+			name: "config-policy-1",
+			config: model.Target{
+				RoutingPolicy: &model.RoutingPolicy{
+					DefinedSets: model.DefinedSets{
+						PrefixSets: model.PrefixSets{
+							PrefixSet: map[string]model.PrefixSet{
+								"test": {
+									Name:   "test",
+									Config: model.PrefixSetConfig{},
+									Prefixes: model.Prefixes{
+										Prefix: map[string]model.Prefix{
+											"192.68.28.0/22..32": {
+												IPPrefix:        "192.68.28.0/22",
+												MasklengthRange: "22..32",
+												Config: model.PrefixConfig{
+													IPPrefix:        "192.68.28.0/22",
+													MasklengthRange: "22..32",
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expected: policy1,
+		},
+		{
+			name: "config-policy-2",
+			config: model.Target{
+				RoutingPolicy: &model.RoutingPolicy{},
+			},
+			expected: "{}",
+		},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			j := NewCompiler()
+			err := j.CreatePrefixListConfig(tc.config)
+			if err != nil {
+				t.Errorf("can't create Policy config: %s", err.Error())
+			}
+
+			jsonConfig, err := j.EmitConfig()
+			if err != nil {
+				t.Errorf("can't emit config: %s", err.Error())
+			}
+
+			switch tc.err {
+			case "":
+				{
+					expected := cleanString(tc.expected)
+					result := cleanString(jsonConfig)
+					assert.Equal(t, expected, result)
+				}
+			default:
+				assert.ErrorContains(t, err, tc.err)
+			}
+
+		})
+	}
+}
+
+func TestCreateACLConfig(t *testing.T) {
+	tt := []struct {
+		name     string
+		config   model.Target
+		expected string
+		err      string
+	}{
+		{
+			name: "config-acl-1",
+			config: model.Target{
+				ACL: &model.ACL{
+					ACLSets: model.ACLSets{
+						ACLSet: map[string]model.ACLSet{
+							"test": {
+								ACLEntries: model.ACLEntries{
+									ACLEntry: map[string]model.ACLEntry{
+										"myACL": {
+											SequenceID: 10,
+											IPv4: model.ACLIPv4{
+												Config: model.ACLIPv4Config{
+													SourceAddresses:      []string{"10.0.0.0/8"},
+													Protocol:             "IP-TCP",
+													DestinationAddresses: []string{"100.64.0.0/24"},
+													DSCP:                 5,
+												},
+											},
+											Actions: model.ACLActions{
+												Config: model.ACLActionsConfig{
+													ForwardingAction: "ACCEPT",
+													TargetGroup:      "cs2",
+												},
+											},
+											Transport: model.ACLTransport{
+												Config: model.ACLTransportConfig{
+													DestinationPort: "443",
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expected: acl1,
+		},
+		{
+			name: "config-acl-2",
+			config: model.Target{
+				ACL: &model.ACL{},
+			},
+			expected: "{}",
+		},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			j := NewCompiler()
+			err := j.CreateACLConfig(tc.config)
+			if err != nil {
+				t.Errorf("can't create ACL config: %s", err.Error())
+			}
+
+			jsonConfig, err := j.EmitConfig()
+			if err != nil {
+				t.Errorf("can't emit config: %s", err.Error())
+			}
+
+			switch tc.err {
+			case "":
+				{
+					expected := cleanString(tc.expected)
+					result := cleanString(jsonConfig)
+					assert.Equal(t, expected, result)
+				}
+			default:
+				assert.ErrorContains(t, err, tc.err)
+			}
+
+		})
+	}
+}
+
 func TestReadJSONFromRouter(t *testing.T) {
 	tt := []struct {
 		name     string
@@ -241,4 +482,102 @@ const routerLo0 = `{
             ]
         }
     }
+}`
+
+const bgp1 = `{
+  "configuration": {
+    "routing-instances": {
+      "instance": [
+        {
+          "name": "test",
+          "protocols": {
+            "bgp": {
+              "group": [
+                {
+                  "name": "customers",
+                  "neighbor": [
+                    {
+                      "name": "10.99.99.1",
+                      "peer-as": "65002"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}`
+
+const policy1 = `{
+  "configuration": {
+    "policy-options": {
+      "policy-statement": [
+        {
+          "name": "test",
+          "term": [
+            {
+              "from": {
+                "route-filter": [
+                  {
+                    "address": "192.68.28.0/22",
+                    "choice-ident": "orlonger",
+                    "choice-value": ""
+                  }
+                ]
+              },
+              "name": "accept"
+            }
+          ],
+          "then": {
+            "accept": [
+              null
+            ]
+          }
+        }
+      ]
+    }
+  }
+}`
+
+const acl1 = `{
+  "configuration": {
+    "firewall": {
+      "filter": [
+        {
+          "name": "test",
+          "term": [
+            {
+              "from": {
+                "destination-address": [
+                  {
+                    "name": "100.64.0.0/24"
+                  }
+                ],
+                "destination-port": [
+                  "443"
+                ],
+                "source-address": [
+                  {
+                    "name": "10.0.0.0/8"
+                  }
+                ]
+              },
+              "name": "test-",
+              "then": {
+                "accept": [
+                  null
+                ],
+                "count": "test-",
+                "forwarding-class": "q1",
+                "loss-priority": "low"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
 }`
