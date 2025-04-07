@@ -6,7 +6,7 @@ Compile the code with `make build` or download an executable from [releases](htt
 
 ### Juniper
 
-Translating OC'ish input to JunOS YANG.
+Translating OC'ish input to JunOS YANG (JSON).
 
 #### Interfaces
 
@@ -164,7 +164,7 @@ $ ./bin/confgen_mac model/testdata/routingpolicy.json
 
 ## Parse JSON config from router
 
-Save the following output to variable `routerLo0` like in the [junos_test.go](compiler/junos/junos_test.go).
+Save the following output to variable `routerLo0` like in the [junos_test.go](compiler/junos/junos_test.go) test file.
 
   I had to make the unit name a string instead of a number ("got float64 type for field name, expect string" error). 
 
@@ -214,8 +214,8 @@ root@JunOS# show interfaces lo0 | display json
 Then unmarshal it like this:
 
 ```go
-      load := &junos.Junos{}
-      if err := junos.Unmarshal([]byte(routerLo0), load); err != nil {
-        t.Errorf("Can't unmarshal JSON: %v", err)
-      }
+  load := &junos.Junos{}
+  if err := junos.Unmarshal([]byte(routerLo0), load); err != nil {
+    t.Errorf("Can't unmarshal JSON: %v", err)
+  }
 ```
