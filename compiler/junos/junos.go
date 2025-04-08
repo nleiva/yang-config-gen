@@ -431,12 +431,9 @@ func (r Juniper) CreateACLConfig(in model.Target) error {
 		if len(aclset.ACLEntries.ACLEntry) < 1 {
 			continue
 		}
-		names := strings.Split(name, "-")
-		postype := names[0]
 
 		filter := fw.GetOrCreateFilter(name)
-		for _, acl := range aclset.ACLEntries.ACLEntry {
-			term := postype + "-" + acl.Config.Description
+		for term, acl := range aclset.ACLEntries.ACLEntry {
 			t := filter.GetOrCreateTerm(term)
 			from := t.GetOrCreateFrom()
 			then := t.GetOrCreateThen()

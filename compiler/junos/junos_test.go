@@ -565,12 +565,12 @@ const acl1 = `{
                   }
                 ]
               },
-              "name": "test-",
+              "name": "myACL",
               "then": {
                 "accept": [
                   null
                 ],
-                "count": "test-",
+                "count": "myACL",
                 "forwarding-class": "q1",
                 "loss-priority": "low"
               }
