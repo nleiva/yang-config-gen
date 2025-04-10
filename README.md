@@ -1,8 +1,12 @@
-# Generating and reading YANG
+# YANG config generator
 
-Compile the code with `make build` or download an executable from [releases](https://github.com/nleiva/yang-config-gen/releases).
+It translates network config parameters (as close to OpenConfig as possible) into vendor-specific YANG syntax that are network-device compatible. 
+
+![Alt text](images/_yang-conf-gen_images_excalidraw.svg)
 
 ## Generate to router
+
+Compile the code with `make build` or download an executable from [releases](https://github.com/nleiva/yang-config-gen/releases).
 
 ### Juniper
 
@@ -164,9 +168,7 @@ $ ./bin/confgen_mac model/testdata/routingpolicy.json
 
 ## Parse JSON config from router
 
-Save the following output to variable `routerLo0` like in the [junos_test.go](compiler/junos/junos_test.go) test file.
-
-  I had to make the unit name a string instead of a number ("got float64 type for field name, expect string" error). 
+Save the following output to variable `routerLo0` like in the [junos_test.go](compiler/junos/junos_test.go) test file. I had to make the unit name a string instead of a number (*"got float64 type for field name, expect string"* error). 
 
 
 ```json
