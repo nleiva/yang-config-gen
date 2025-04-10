@@ -2,7 +2,7 @@
 
 It translates network config parameters (as close to OpenConfig as possible) into vendor-specific YANG syntax that are network-device compatible. 
 
-![Alt text](images/_yang-conf-gen_images_excalidraw.svg)
+![Alt text](images/excalidraw.svg)
 
 ## Generate to router
 
