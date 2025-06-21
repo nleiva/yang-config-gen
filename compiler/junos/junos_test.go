@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/nleiva/yang-config-gen/model"
-	"github.com/nleiva/yang-data-structures/junos"
+	"github.com/nleiva/yang-data-structures/juniper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -394,8 +394,8 @@ func TestReadJSONFromRouter(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			//t.Parallel()
-			load := &junos.Junos{}
-			if err := junos.Unmarshal([]byte(routerLo0), load); err != nil {
+			load := &juniper.Junos{}
+			if err := juniper.Unmarshal([]byte(routerLo0), load); err != nil {
 				t.Errorf("Can't unmarshal JSON: %v", err)
 			}
 

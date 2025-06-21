@@ -10,6 +10,7 @@ type Target struct {
 	ASN              int64
 	ID               int32
 	Interfaces       Interfaces       `json:"interfaces"`
+	System           System           `json:"system"`
 	NetworkInstances NetworkInstances `json:"network-instances"`
 	RoutingPolicy    *RoutingPolicy   `json:"routing-policy"`
 	ACL              *ACL             `json:"acl"`

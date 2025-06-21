@@ -7,17 +7,17 @@ import (
 	"strings"
 
 	"github.com/nleiva/yang-config-gen/model"
-	"github.com/nleiva/yang-data-structures/junos"
+	"github.com/nleiva/yang-data-structures/juniper"
 	"github.com/openconfig/ygot/ygot"
 )
 
 type Juniper struct {
 	SW   string
-	root *junos.Junos
+	root *juniper.Junos
 }
 
 func NewCompiler() Juniper {
-	j := new(junos.Junos)
+	j := new(juniper.Junos)
 	j.GetOrCreateConfiguration()
 
 	return Juniper{
@@ -103,41 +103,41 @@ func (r Juniper) CreateIntConfig(in model.Target) error {
 		// 	intf.Disable = true
 		// }
 		if cfg.MTU != 0 {
-			intf.Mtu = junos.UnionUint32(iface.Config.MTU)
+			intf.Mtu = juniper.UnionUint32(iface.Config.MTU)
 		}
 
 		eth := iface.Ethernet
 		if eth.SwitchedVLAN.Config.NativeVlan != 0 {
-			intf.NativeVlanId = junos.UnionUint32(eth.SwitchedVLAN.Config.NativeVlan)
+			intf.NativeVlanId = juniper.UnionUint32(eth.SwitchedVLAN.Config.NativeVlan)
 		}
 
 		ethCfg := eth.Config
 		switch ethCfg.PortSpeed {
 		case 1000:
-			intf.Speed = junos.JunosConfRoot_Configuration_Interfaces_Interface_Speed_1g
+			intf.Speed = juniper.JunosConfRoot_Configuration_Interfaces_Interface_Speed_1g
 		case 10000:
-			intf.Speed = junos.JunosConfRoot_Configuration_Interfaces_Interface_Speed_10g
+			intf.Speed = juniper.JunosConfRoot_Configuration_Interfaces_Interface_Speed_10g
 		case 100000:
-			intf.Speed = junos.JunosConfRoot_Configuration_Interfaces_Interface_Speed_100g
+			intf.Speed = juniper.JunosConfRoot_Configuration_Interfaces_Interface_Speed_100g
 		default:
-			intf.Speed = junos.JunosConfRoot_Configuration_Interfaces_Interface_Speed_UNSET
+			intf.Speed = juniper.JunosConfRoot_Configuration_Interfaces_Interface_Speed_UNSET
 		}
 
 		if ethCfg.DuplexMode != "" {
 			switch ethCfg.DuplexMode {
 			case "FULL":
-				intf.LinkMode = junos.JunosConfRoot_Configuration_Interfaces_Interface_LinkMode_full_duplex
+				intf.LinkMode = juniper.JunosConfRoot_Configuration_Interfaces_Interface_LinkMode_full_duplex
 			default:
-				intf.LinkMode = junos.JunosConfRoot_Configuration_Interfaces_Interface_LinkMode_automatic
+				intf.LinkMode = juniper.JunosConfRoot_Configuration_Interfaces_Interface_LinkMode_automatic
 			}
 		}
 
 		if ethCfg.Encapsulation != "" {
 			switch ethCfg.Encapsulation {
 			case "dot1q":
-				intf.Encapsulation = junos.JunosConfRoot_Configuration_Interfaces_Interface_Encapsulation_vlan_ccc
+				intf.Encapsulation = juniper.JunosConfRoot_Configuration_Interfaces_Interface_Encapsulation_vlan_ccc
 			default:
-				intf.Encapsulation = junos.JunosConfRoot_Configuration_Interfaces_Interface_Encapsulation_ethernet
+				intf.Encapsulation = juniper.JunosConfRoot_Configuration_Interfaces_Interface_Encapsulation_ethernet
 			}
 		}
 
@@ -334,13 +334,13 @@ func (r Juniper) CreateRoutingPolicyConfig(in model.Target) error {
 			case "ACCEPT_ROUTE":
 				then.Accept = true
 			case "NEXT_ENTRY":
-				then.Next = junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_Term_Then_Next_policy
+				then.Next = juniper.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_Term_Then_Next_policy
 			case "REJECT_ROUTE":
 				then.Reject = true
 			}
 
 			if statement.Actions.BGPActions.Config.SetMed != 0 {
-				then.GetOrCreateMetric().Metric = junos.UnionUint32(statement.Actions.BGPActions.Config.SetMed)
+				then.GetOrCreateMetric().Metric = juniper.UnionUint32(statement.Actions.BGPActions.Config.SetMed)
 			}
 			// Check this in the model
 			//
@@ -379,7 +379,7 @@ func (r Juniper) CreatePrefixListConfig(in model.Target) error {
 		for _, statement := range prefixset.Prefixes.Prefix {
 			t := policy.GetOrCreateTerm("accept")
 			from := t.GetOrCreateFrom()
-			orlonger := junos.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_From_RouteFilter_ChoiceIdent_orlonger
+			orlonger := juniper.JunosConfRoot_Configuration_PolicyOptions_PolicyStatement_From_RouteFilter_ChoiceIdent_orlonger
 			from.GetOrCreateRouteFilter(statement.IPPrefix, orlonger, "")
 		}
 
@@ -489,65 +489,65 @@ func (r Juniper) CreateACLConfig(in model.Target) error {
 			case "ef":
 				fc := "ef"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
 			// match-dscp forwarding-class be loss-priority high code-points be
 			case "be":
 				fc := "be"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
 			// match-dscp forwarding-class q1 loss-priority low code-points cs2
 			case "cs2":
 				fc := "q1"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
 			// match-dscp forwarding-class q1 loss-priority high code-points cs1
 			// match-dscp forwarding-class q1 loss-priority high code-points af11
 			case "af11", "cs1":
 				fc := "q1"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
 			// match-dscp forwarding-class q3 loss-priority high code-points cs3
 			// match-dscp forwarding-class q3 loss-priority high code-points af31
 			case "cs3", "af31":
 				fc := "q3"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
 			// match-dscp forwarding-class q3 loss-priority low code-points cs5
 			case "cs5":
 				fc := "q3"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
 			// match-dscp forwarding-class q4 loss-priority low code-points cs4
 			case "cs4":
 				fc := "q4"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
 			// match-dscp forwarding-class q4 loss-priority high code-points af41
 			// match-dscp forwarding-class q4 loss-priority high code-points af42
 			case "af41", "af42":
 				fc := "q4"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
 			// match-dscp forwarding-class sc loss-priority low code-points cs6
 			case "cs6":
 				fc := "sc"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
 			// match-dscp forwarding-class nc loss-priority low code-points cs7
 			case "cs7":
 				fc := "nc"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
 			// match-dscp forwarding-class q2 loss-priority low code-points af21
 			case "af21":
 				fc := "q2"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_low
 			// match-dscp forwarding-class q2 loss-priority high code-points af22
 			case "af22":
 				fc := "q2"
 				then.ForwardingClass = &fc
-				then.LossPriority = junos.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
+				then.LossPriority = juniper.JunosConfRoot_Configuration_Firewall_Family_Inet_Filter_Term_Then_LossPriority_medium_low
 			default:
 			}
 

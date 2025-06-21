@@ -6,11 +6,9 @@ It translates network config parameters (as close to OpenConfig as possible) int
 
 ## Generate to router
 
-Compile the code with `make build` or download an executable from [releases](https://github.com/nleiva/yang-config-gen/releases).
+Compile the code with `make build` or download an executable from [releases](https://github.com/nleiva/yang-config-gen/releases) to translate a vendor agnostic input to vendor-specific YANG (JSON).
 
 ### Juniper
-
-Translating OC'ish input to JunOS YANG (JSON).
 
 #### Interfaces
 
